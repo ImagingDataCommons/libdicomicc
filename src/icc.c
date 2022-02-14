@@ -4,6 +4,7 @@
 
 #include <lcms2.h>
 
+#include "config.h"
 #include "icc.h"
 
 struct _iccTransform {

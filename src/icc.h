@@ -5,6 +5,8 @@
 
 typedef struct _iccTransform iccTransform;
 
+extern const char *icc_get_version(void);
+
 extern iccTransform *icc_transform_create(const char *icc_profile,
                                           uint32_t icc_profile_size,
                                           uint8_t planar_configuration);

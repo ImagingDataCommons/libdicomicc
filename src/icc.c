@@ -1,18 +1,18 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdbool.h>
-
+#include <math.h>
 #include <lcms2.h>
 
-#include "config.h"
 #include "icc.h"
+#include "config.h"
 
 struct _iccTransform {
     cmsHTRANSFORM handle;
 };
 
 const char *icc_get_version(void) {
-    return SUFFIXED_VERSION;
+    return PROJECT_VER;
 }
 
 iccTransform *icc_transform_create(const char *icc_profile,
@@ -42,6 +42,7 @@ iccTransform *icc_transform_create(const char *icc_profile,
         type = TYPE_RGB_8;
     }
 
+
     const cmsHTRANSFORM transform_handle = cmsCreateTransform(in_handle,
                                                               type,
                                                               out_handle,
@@ -69,12 +70,12 @@ iccTransform *icc_transform_create(const char *icc_profile,
 
 void icc_transform_apply(const iccTransform *icc_transform,
                          const char *frame,
-                         uint32_t frame_size,
+                         uint32_t numer_of_pixels,
                          char *corrected_frame) {
     cmsDoTransform(icc_transform->handle,
                    frame,
                    corrected_frame,
-                   frame_size);
+                   numer_of_pixels);
 }
 
 void icc_transform_destroy(iccTransform *icc_transform) {
@@ -86,4 +87,10 @@ void icc_transform_destroy(iccTransform *icc_transform) {
         free(icc_transform);
         icc_transform = NULL;
     }
+}
+
+uint32_t icc_calculate_image_size(uint32_t frame_length,
+                                  uint16_t samples_per_pixel)
+{
+  return floor(frame_length / samples_per_pixel);
 }

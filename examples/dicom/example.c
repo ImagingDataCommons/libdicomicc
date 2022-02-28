@@ -67,8 +67,8 @@ int main(int argc, char *argv[])
     }
     const char *frame_value = dcm_frame_get_value(frame);
     uint32_t frame_length = dcm_frame_get_length(frame);
-    uint16_t samples_per_pixel = dcm_frame_get_samples_per_pixel(frame);
-    uint32_t number_of_pixels = icc_calculate_image_size(frame_length, samples_per_pixel);
+    uint16_t columns = dcm_frame_get_columns(frame);
+    uint16_t rows = dcm_frame_get_rows(frame);
 
     char *corrected_frame_value = malloc(frame_length);
     //this should be frame_length+1, but in this case we will have memory leaks
@@ -84,7 +84,8 @@ int main(int argc, char *argv[])
     dcm_log_info("Apply ICC transform to frame #%u", frame_number);
     icc_transform_apply(icc_transform,
                         frame_value,
-                        number_of_pixels,
+                        columns,
+                        rows,
                         corrected_frame_value);
 
     /*dcm_log_info("Check results");

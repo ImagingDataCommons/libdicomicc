@@ -13,12 +13,10 @@ extern iccTransform *icc_transform_create(const char *icc_profile,
 
 extern void icc_transform_apply(const iccTransform *icc_transform,
                                 const char *frame,
-                                uint32_t numer_of_pixels,
+                                uint16_t columns,
+                                uint16_t rows,
                                 char *corrected_frame);
 
 extern void icc_transform_destroy(iccTransform *icc_transform);
-
-extern uint32_t icc_calculate_image_size(uint32_t frame_length,
-                                         uint16_t samples_per_pixel);
 
 #endif

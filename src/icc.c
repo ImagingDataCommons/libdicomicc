@@ -7,17 +7,17 @@
 #include "icc.h"
 #include "config.h"
 
-struct _iccTransform {
+struct _DmcIccTransform {
     cmsHTRANSFORM handle;
 };
 
-const char *icc_get_version(void) {
+const char *dcm_icc_get_version(void) {
     return PROJECT_VER;
 }
 
-iccTransform *icc_transform_create(const char *icc_profile,
-                                   uint32_t icc_profile_size,
-                                   uint8_t planar_configuration) {
+DmcIccTransform *dcm_icc_transform_create(const char *icc_profile,
+                                          uint32_t icc_profile_size,
+                                          uint8_t planar_configuration) {
     cmsUInt32Number type;
 
     // Input ICC profile: obtained from DICOM data set
@@ -57,7 +57,7 @@ iccTransform *icc_transform_create(const char *icc_profile,
         return NULL;
     }
 
-    iccTransform *icc_transform = calloc(1, sizeof(iccTransform));
+    DmcIccTransform *icc_transform = calloc(1, sizeof(DmcIccTransform));
     if (icc_transform == NULL) {
         cmsDeleteTransform(transform_handle);
         return NULL;
@@ -68,18 +68,18 @@ iccTransform *icc_transform_create(const char *icc_profile,
     return icc_transform;
 }
 
-void icc_transform_apply(const iccTransform *icc_transform,
-                         const char *frame,
-                         uint16_t columns,
-                         uint16_t rows,
-                         char *corrected_frame) {
+void dcm_icc_transform_apply(const DmcIccTransform *icc_transform,
+                             const char *frame,
+                             uint16_t columns,
+                             uint16_t rows,
+                             char *corrected_frame) {
     cmsDoTransform(icc_transform->handle,
                    frame,
                    corrected_frame,
                    columns * rows);
 }
 
-void icc_transform_destroy(iccTransform *icc_transform) {
+void dcm_icc_transform_destroy(DmcIccTransform *icc_transform) {
     if (icc_transform) {
         if (icc_transform->handle) {
             cmsDeleteTransform(icc_transform->handle);

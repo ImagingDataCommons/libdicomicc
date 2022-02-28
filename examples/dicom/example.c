@@ -49,9 +49,9 @@ int main(int argc, char *argv[])
     uint8_t planar_config = dcm_element_get_value_US(planar_config_element, 0);
 
     dcm_log_info("Create ICC transform.");
-    iccTransform *icc_transform = icc_transform_create(icc_profile,
-                                                       icc_profile_length,
-                                                       planar_config);
+    DmcIccTransform *icc_transform = dcm_icc_transform_create(icc_profile,
+                                                              icc_profile_length,
+                                                              planar_config);
 
     dcm_log_info("Read frame #%u from DICOM file.", frame_number);
     DcmBOT *bot = dcm_file_build_bot(file, metadata);
@@ -82,11 +82,11 @@ int main(int argc, char *argv[])
     }
 
     dcm_log_info("Apply ICC transform to frame #%u", frame_number);
-    icc_transform_apply(icc_transform,
-                        frame_value,
-                        columns,
-                        rows,
-                        corrected_frame_value);
+    dcm_icc_transform_apply(icc_transform,
+                            frame_value,
+                            columns,
+                            rows,
+                            corrected_frame_value);
 
     /*dcm_log_info("Check results");
     for (int i = 0; i < (int) frame_length / 3; i++) {
@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
     dcm_file_destroy(file);
 
     dcm_log_info("Cleanup ICC transform.");
-    icc_transform_destroy(icc_transform);
+    dcm_icc_transform_destroy(icc_transform);
 
     dcm_log_info("Cleanup output image.");
     free(corrected_frame_value);

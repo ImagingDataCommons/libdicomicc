@@ -48,11 +48,6 @@ int main(int argc, char *argv[])
                                                               0x00280006);
     uint8_t planar_config = dcm_element_get_value_US(planar_config_element, 0);
 
-    dcm_log_info("Create ICC transform.");
-    DmcIccTransform *icc_transform = dcm_icc_transform_create(icc_profile,
-                                                              icc_profile_length,
-                                                              planar_config);
-
     dcm_log_info("Read frame #%u from DICOM file.", frame_number);
     DcmBOT *bot = dcm_file_build_bot(file, metadata);
     DcmFrame *frame = dcm_file_read_frame(file, metadata, bot, frame_number);
@@ -70,6 +65,13 @@ int main(int argc, char *argv[])
     uint16_t columns = dcm_frame_get_columns(frame);
     uint16_t rows = dcm_frame_get_rows(frame);
 
+    dcm_log_info("Create ICC transform.");
+    DmcIccTransform *icc_transform = dcm_icc_transform_create(icc_profile,
+                                                              icc_profile_length,
+                                                              planar_config,
+                                                              columns,
+                                                              rows);
+
     char *corrected_frame_value = malloc(frame_length);
     //this should be frame_length+1, but in this case we will have memory leaks
     if (corrected_frame_value == NULL) {
@@ -84,8 +86,6 @@ int main(int argc, char *argv[])
     dcm_log_info("Apply ICC transform to frame #%u", frame_number);
     dcm_icc_transform_apply(icc_transform,
                             frame_value,
-                            columns,
-                            rows,
                             corrected_frame_value);
 
     /*dcm_log_info("Check results");

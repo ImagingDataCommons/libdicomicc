@@ -9,6 +9,7 @@
 
 struct _DmcIccTransform {
     cmsHTRANSFORM handle;
+    uint32_t image_pixels;
 };
 
 const char *dcm_icc_get_version(void) {
@@ -17,7 +18,9 @@ const char *dcm_icc_get_version(void) {
 
 DmcIccTransform *dcm_icc_transform_create(const char *icc_profile,
                                           uint32_t icc_profile_size,
-                                          uint8_t planar_configuration) {
+                                          uint8_t planar_configuration,
+                                          uint16_t columns,
+                                          uint16_t rows) {
     cmsUInt32Number type;
 
     // Input ICC profile: obtained from DICOM data set
@@ -64,19 +67,18 @@ DmcIccTransform *dcm_icc_transform_create(const char *icc_profile,
     }
 
     icc_transform->handle = transform_handle;
+    icc_transform->image_pixels = rows * columns;
 
     return icc_transform;
 }
 
 void dcm_icc_transform_apply(const DmcIccTransform *icc_transform,
                              const char *frame,
-                             uint16_t columns,
-                             uint16_t rows,
                              char *corrected_frame) {
     cmsDoTransform(icc_transform->handle,
                    frame,
                    corrected_frame,
-                   columns * rows);
+                   icc_transform->image_pixels);
 }
 
 void dcm_icc_transform_destroy(DmcIccTransform *icc_transform) {

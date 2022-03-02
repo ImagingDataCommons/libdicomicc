@@ -1,3 +1,11 @@
+# Builds
+build/*
+build-native/*
+dist/*
+!build/.gitpreserve
+!build-native/.gitpreserve
+!dist/.gitpreserve
+
 # Compiled Object files
 *.slo
 *.lo

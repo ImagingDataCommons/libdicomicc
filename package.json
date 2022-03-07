@@ -1,8 +1,8 @@
 {
-  "name": "libicc",
+  "name": "libdicomicc",
   "version": "0.1.0",
-  "description": "WASM Build of Little-CMS",
-  "main": "dist/libicc.js",
+  "description": "WASM Build of libdicomicc",
+  "main": "dist/libdicomicc.js",
   "publishConfig": {
     "access": "public"
   },
@@ -15,9 +15,9 @@
     "node": ">=0.14"
   },
   "exports": {
-    ".": "./dist/libicc.js",
-    "./wasm": "./dist/libiccwasm.wasm",
-    "./wasmjs": "./dist/libiccwasm.js"
+    ".": "./dist/libdicomicc.js",
+    "./wasm": "./dist/libdicomiccwasm.wasm",
+    "./wasmjs": "./dist/libdicomiccwasm.js"
   },
   "directories": {
     "test": "test"
@@ -32,7 +32,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hackermd/libicc"
+    "url": "git+https://github.com/hackermd/libdicomicc"
   },
   "keywords": [
     "ICC",
@@ -46,9 +46,9 @@
   },
   "license": "",
   "bugs": {
-    "url": "https://github.com/hackermd/libicc/issues"
+    "url": "https://github.com/hackermd/libdicomicc/issues"
   },
-  "homepage": "https://github.com/hackermd/libicc#readme",
+  "homepage": "https://github.com/hackermd/libdicomicc#readme",
   "devDependencies": {
     "@babel/core": "^7.12.16",
     "@babel/preset-env": "^7.12.16",

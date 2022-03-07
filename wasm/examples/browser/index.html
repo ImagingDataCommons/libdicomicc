@@ -6,8 +6,8 @@ Copyright (c)
 <head>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
-    <script type="text/javascript" src="../../dist/libiccjs.js"></script>
-    <script type="text/javascript" src="../../dist/libiccwasm.js"></script>
+    <script type="text/javascript" src="../../../dist/libdicomiccjs.js"></script>
+    <script type="text/javascript" src="../../../dist/libdicomiccwasm.js"></script>
     <script type="text/javascript" src="https://unpkg.com/dcmjs"></script>
 </head>
 <body>
@@ -19,7 +19,7 @@ Copyright (c)
       </p>
       <div class="row">
         <select id="imageSelector">
-          <option value="../../test/fixtures/test.dcm" selected>test</option>
+          <option value="../../examples/fixtures/test.dcm" selected>test</option>
         </select>
         <button id="benchmark">Benchmark</button>
         <label><input id="useWASM" disabled type="checkbox" value="">Use WASM</label>
@@ -172,7 +172,7 @@ Copyright (c)
   }
 
   function main() {
-    init('../../test/fixtures/test.dcm');
+    init('../../examples/fixtures/test.dcm');
 
     $('#imageSelector').change(function(e) {
       reset();
@@ -196,17 +196,17 @@ Copyright (c)
     });
   }
 
-  libicc().then(function(libiccjs) {
-    console.log('libiccjs', libiccjs);
-    icctramsformjs = new libiccjs.ICCCMSTransform();
+  libdicomicc().then(function(libdicomiccjs) {
+    console.log('libdicomiccjs', libdicomiccjs);
+    icctramsformjs = new libdicomiccjs.ICCCMSTransform();
     icctramsform = icctramsformjs;
     $('#useWASM').prop('checked', false);
     main();
   });
 
-  libiccWASM().then(function(libiccwasm) {
-    console.log('libiccwasm', libiccwasm);
-    icctramsformwasm = new libiccwasm.ICCCMSTransform();
+  libdicomiccWASM().then(function(libdicomiccwasm) {
+    console.log('libdicomiccwasm', libdicomiccwasm);
+    icctramsformwasm = new libdicomiccwasm.ICCCMSTransform();
     icctramsform = icctramsformwasm;
     $('#useWASM').prop('checked', true);
     $('#useWASM').prop('disabled', false);

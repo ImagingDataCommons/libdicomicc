@@ -202,7 +202,7 @@ void CMSEXPORT cmsDoTransform(cmsHTRANSFORM  Transform,
     stride.BytesPerLineOut = 0;
     stride.BytesPerPlaneIn = Size * PixelSize(p->InputFormat);
     stride.BytesPerPlaneOut = Size * PixelSize(p->OutputFormat);
-
+           
     p -> xform(p, InputBuffer, OutputBuffer, Size, 1, &stride);
 }
 

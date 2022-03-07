@@ -1,56 +1,43 @@
-set (LIBDICOMICC_INCLUDE
-  ${CMAKE_CURRENT_SOURCE_DIR}/../libdicomicc/src
-  ${CMAKE_CURRENT_SOURCE_DIR}/../libdicomicc/libdicom/include
-  ${CMAKE_CURRENT_SOURCE_DIR}/../libdicomicc/lcms2/include)
+#================================
+# Building
+#================================
+if(EMSCRIPTEN)
+  set(BUILD_SHARED_LIBS OFF)
+else()
+  set(BUILD_SHARED_LIBS ON)
+endif()
 
-include_directories(${LIBDICOMICC_INCLUDE})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-add_executable(libiccjs jslib.cpp)
+include_directories(${LCMS2_INCLUDE_DIR})
 
-target_link_libraries(libiccjs dicomicc)
+set(DCMICC_LIBRARIES "libdicomicc" CACHE INTERNAL "" FORCE)
+set(DCMICC_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}" CACHE INTERNAL "" FORCE)
 
-set_target_properties(
-    libiccjs
-    PROPERTIES
-    LINK_FLAGS "\
-      --bind \
-      -s MODULARIZE=1 \
-      -s EXPORT_NAME=libicc \
-      -s WASM=0 \
-      -s DISABLE_EXCEPTION_CATCHING=1 \
-      -s ASSERTIONS=0 \
-      -s NO_EXIT_RUNTIME=1 \
-      -s MALLOC=emmalloc \
-      -s ALLOW_MEMORY_GROWTH=1 \
-      -s TOTAL_MEMORY=1073741824 \
-      -s FILESYSTEM=0 \
-      -s EXPORTED_FUNCTIONS=[] \
-      -s EXPORTED_RUNTIME_METHODS=[ccall] \
-      -s LLD_REPORT_UNDEFINED \
-   ")
+add_library(${DCMICC_LIBRARIES} dicomicc.h dicomicc.c)
+set_target_properties(${DCMICC_LIBRARIES} PROPERTIES VERSION
+    ${LIBDICOMICC_VERSION})
+target_link_libraries(${DCMICC_LIBRARIES} ${LCMS2_LIBRARIES} m)
 
-# WASM BUILD
-add_executable(libiccwasm jslib.cpp)
+#================================
+# Install
+#================================
+include(InstallRequiredSystemLibraries)
 
-target_link_libraries(libiccwasm dicomicc)
+install(TARGETS ${DCMICC_LIBRARIES} DESTINATION lib COMPONENT Runtime)
 
-set_target_properties(
-  libiccwasm
-    PROPERTIES
-    LINK_FLAGS "\
-      --bind \
-      -s MODULARIZE=1 \
-      -s EXPORT_NAME=libiccWASM \
-      -s WASM=1 \
-      -s DISABLE_EXCEPTION_CATCHING=1 \
-      -s ASSERTIONS=0 \
-      -s NO_EXIT_RUNTIME=1 \
-      -s MALLOC=emmalloc \
-      -s ALLOW_MEMORY_GROWTH=1 \
-      -s TOTAL_MEMORY=1073741824 \
-      -s FILESYSTEM=0 \
-      -s EXPORTED_FUNCTIONS=[] \
-      -s EXPORTED_RUNTIME_METHODS=[ccall] \
-      -s LLD_REPORT_UNDEFINED \
-   ")
+#================================
+# Packaging
+#================================
 
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${DCMICC_LIBRARIES})
+set(CPACK_PACKAGE_VENDOR ${DCMICC_LIBRARIES})
+set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+set(CPACK_PACKAGE_VERSION_MAJOR ${LIBDICOMICC_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${LIBDICOMICC_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${LIBDICOMICC_VERSION_PATCH})
+set(CPACK_GENERATOR "TGZ")
+include(CPack)

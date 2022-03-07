@@ -1,6 +1,6 @@
-# Building libicc-js
+# Building libdicomicc-js
 
-libicc-js utilizes CMake and EMSCRIPTEN for building.  The dependencies used
+libdicomicc-js utilizes CMake and EMSCRIPTEN for building.  The dependencies used
 for this build are as follows:
 
 * CMake 3.16 or better
@@ -9,7 +9,7 @@ for this build are as follows:
 
 **earlier versions may work but have not been tested**
 
-## Building C example (requires EMSCRIPTEN)
+## Building C example
 
 ```bash
 sh build-native.sh
@@ -29,14 +29,14 @@ in the folder build/buin
 yarn build
 ```
 
-After building, you can run the browser based test by running an http server
+After building, you can run the browser based test by running an web server
 at the root of this project and opening the file test/browser/index.html.
 
 ## Build Output
 
 The build script generates two files in the /dist folder:
-* libicc.wasm - WebAssembly build of icc library (wrapper to Little-CMS)
-* libicc-js - JavaScript "glue" genereated by EMBIND
+* libdicomicc.wasm - WebAssembly build of dicomicc library (wrapper to Little-CMS)
+* libdicomicc-js - JavaScript "glue" genereated by EMBIND
 
 ## Publishing to NPM
 

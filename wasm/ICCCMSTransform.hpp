@@ -1,7 +1,7 @@
 #pragma once
 
 extern "C" {
-  #include <icc.h>
+  #include <dicomicc.h>
 }
 #include <vector>
 #include <emscripten/val.h>
@@ -78,6 +78,7 @@ class ICCCMSTransform {
 
     dcm_icc_transform_apply(icc_transform,
                             (const char *) input_.data(),
+                            (uint32_t) input_.size(),
                             (char *) output_.data());
 
     dcm_icc_transform_destroy(icc_transform);

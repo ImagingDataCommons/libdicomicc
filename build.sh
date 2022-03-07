@@ -12,10 +12,10 @@ echo "~~~ CONFIGURE ~~~"
 echo "~~~ MAKE ~~~"
 (cd build && emmake make -j 8)
 echo "~~~ COPY ~~~ "
-cp ./build/src/libiccwasm.js ./dist
-cp ./build/src/libiccwasm.wasm ./dist
-cp ./build/src/libiccjs.js ./dist
-cp ./build/src/libiccjs.js.mem ./dist
+cp ./build/wasm/libdicomiccwasm.js ./dist
+cp ./build/wasm/libdicomiccwasm.wasm ./dist
+cp ./build/wasm/libdicomiccjs.js ./dist
+cp ./build/wasm/libdicomiccjs.js.mem ./dist
 
 echo "~~~ BUILD:"
 (cd build && dir)

@@ -4,12 +4,12 @@
 #include <math.h>
 #include <lcms2.h>
 
-#include "icc.h"
+#include "dicomicc.h"
 #include "config.h"
 
 struct _DmcIccTransform {
     cmsHTRANSFORM handle;
-    uint32_t image_pixels;
+    uint32_t number_of_pixels;
 };
 
 const char *dcm_icc_get_version(void) {
@@ -67,18 +67,19 @@ DmcIccTransform *dcm_icc_transform_create(const char *icc_profile,
     }
 
     icc_transform->handle = transform_handle;
-    icc_transform->image_pixels = rows * columns;
+    icc_transform->number_of_pixels = (uint32_t)rows * (uint32_t)columns;
 
     return icc_transform;
 }
 
 void dcm_icc_transform_apply(const DmcIccTransform *icc_transform,
                              const char *frame,
+                             uint32_t frame_size,
                              char *corrected_frame) {
     cmsDoTransform(icc_transform->handle,
                    frame,
                    corrected_frame,
-                   icc_transform->image_pixels);
+                   icc_transform->number_of_pixels);
 }
 
 void dcm_icc_transform_destroy(DmcIccTransform *icc_transform) {

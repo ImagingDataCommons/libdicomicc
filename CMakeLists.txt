@@ -1,11 +1,24 @@
 cmake_minimum_required(VERSION 3.16)
 
-project (libicc)
+project (libdicomicc)
 
-set(PROJECT_VERSION_MAJOR 0)
-set(PROJECT_VERSION_MINOR 1)
-set(PROJECT_VERSION_PATCH 0)
-set(PROJECT_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
+set(LIBDICOMICC_VERSION_MAJOR 0)
+set(LIBDICOMICC_VERSION_MINOR 1)
+set(LIBDICOMICC_VERSION_PATCH 0)
+set(LIBDICOMICC_VERSION "${LIBDICOMICC_VERSION_MAJOR}.${LIBDICOMICC_VERSION_MINOR}.${LIBDICOMICC_VERSION_PATCH}")
+
+# Find includes in the build directories
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+# add the binary tree to the search path for include files
+# so that we will find config.h
+include_directories("${PROJECT_BINARY_DIR}")
+
+# configure a header file to pass some of the CMake settings
+# to the source code
+configure_file (
+  "${PROJECT_SOURCE_DIR}/config.h.in"
+  "${PROJECT_BINARY_DIR}/config.h")
 
 # Compiler options
 set(CMAKE_CXX_STANDARD 11)
@@ -26,23 +39,11 @@ else()
   set(BUILD_SHARED_LIBS ON)
 endif()
 
-# add the icc library
-# To Do: libdicomicc should be built as an External cmake project and
-# libicc should be a SuperBuild.
-add_subdirectory(libdicomicc)
+add_subdirectory(thirdparty)
 
-# copy test dataset
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/test/fixtures/test.dcm
-  ${CMAKE_BINARY_DIR}/bin/test.dcm
-  COPYONLY)
-
-install(
-  FILES ${CMAKE_BINARY_DIR}/bin/test.dcm
-  DESTINATION bin
-  COMPONENT Runtime)
+add_subdirectory(src)
 
 # js wrapper
 if(EMSCRIPTEN)
-  add_subdirectory(src)
+  add_subdirectory(wasm)
 endif()

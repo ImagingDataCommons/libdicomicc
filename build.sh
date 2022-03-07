@@ -14,8 +14,6 @@ echo "~~~ MAKE ~~~"
 echo "~~~ COPY ~~~ "
 cp ./build/wasm/libdicomiccwasm.js ./dist
 cp ./build/wasm/libdicomiccwasm.wasm ./dist
-cp ./build/wasm/libdicomiccjs.js ./dist
-cp ./build/wasm/libdicomiccjs.js.mem ./dist
 
 echo "~~~ BUILD:"
 (cd build && dir)

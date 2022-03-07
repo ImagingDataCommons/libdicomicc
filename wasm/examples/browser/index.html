@@ -6,7 +6,6 @@ Copyright (c)
 <head>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
-    <script type="text/javascript" src="../../../dist/libdicomiccjs.js"></script>
     <script type="text/javascript" src="../../../dist/libdicomiccwasm.js"></script>
     <script type="text/javascript" src="https://unpkg.com/dcmjs"></script>
 </head>
@@ -22,7 +21,6 @@ Copyright (c)
           <option value="../../examples/fixtures/test.dcm" selected>test</option>
         </select>
         <button id="benchmark">Benchmark</button>
-        <label><input id="useWASM" disabled type="checkbox" value="">Use WASM</label>
       </div>
     </div>
     <div class="row">
@@ -48,26 +46,22 @@ Copyright (c)
 </body>
 
 <script>
+  let libdicomicc = undefined;
   let icctramsform = undefined;
-  let icctramsformjs = undefined;
-  let icctramsformwasm = undefined;
-
   let inputBitStream = undefined;
   let iccBitStream = undefined;
   let frameInfoImage = undefined;
-  let planarConfiguration = undefined;
 
   function colorToCanvas(frameInfo, pixelData, imageData) {
     let outOffset = 0;
-    const bytesPerSample = (frameInfo.bitsPerSample <= 8) ? 1 : 2;
     let shift = 0;
     if(frameInfo.bitsPerSample > 8) {
       shift = 8;
     }
     let inOffset = 0;
 
-    for(var y=0; y < frameInfo.height; y++) {
-      for (var x = 0; x < frameInfo.width; x++) {
+    for(var y=0; y < frameInfo.columns; y++) {
+      for (var x = 0; x < frameInfo.rows; x++) {
         imageData.data[outOffset++] = pixelData[inOffset++] >> shift;
         imageData.data[outOffset++] = pixelData[inOffset++] >> shift;
         imageData.data[outOffset++] = pixelData[inOffset++] >> shift;
@@ -82,12 +76,12 @@ Copyright (c)
     var c = document.getElementById("myCanvas");
     var ctx = c.getContext("2d");
 
-    c.width = frameInfoImage.width;
-    c.height = frameInfoImage.height;
+    c.width = frameInfoImage.columns;
+    c.height = frameInfoImage.rows;
 
-    var myImageData = ctx.createImageData(frameInfoImage.width, frameInfoImage.height);
-    colorToCanvas(frameInfoImage, pixelData, myImageData);
-    ctx.putImageData(myImageData, 0, 0);
+    var imageData = ctx.createImageData(frameInfoImage.columns, frameInfoImage.rows);
+    colorToCanvas(frameInfoImage, pixelData, imageData);
+    ctx.putImageData(imageData, 0, 0);
 
     const end = performance.now();
     $('#displayTime').text((end-begin).toFixed(2) + ' ms');
@@ -96,17 +90,7 @@ Copyright (c)
   function transform() {
     let begin = performance.now(); // performance.now() returns value in milliseconds
 
-    // Setup
-    const inputBuffer = icctramsform.getInputBuffer(inputBitStream.length);
-    inputBuffer.set(inputBitStream);
-
-    const iccBuffer = icctramsform.getICCBuffer(iccBitStream.length);
-    iccBuffer.set(iccBitStream);
-
-    icctramsform.setFrameInfo(frameInfoImage)
-
-    // transform
-    icctramsform.transform();
+    const correctedFrame = icctramsform.Transform(inputBitStream);
 
     let end = performance.now();
 
@@ -115,34 +99,33 @@ Copyright (c)
     // Display image properties
     $('#size').text(''+frameInfoImage.width + 'x' + frameInfoImage.height);
     $('#bitsPerSample').text(''+frameInfoImage.bitsPerSample +' bpp ');
-    $('#componentCount').text(''+frameInfoImage.componentCount);
+    $('#componentCount').text(''+frameInfoImage.samplesPerPixel);
 
-    // Display Image
-    const outputBuffer = icctramsform.getOutputBuffer();
-    display(outputBuffer);
+    // Display Output
+    display(correctedFrame);
   }
 
-  function loadArrayBuffer(arrayBuffer) {
-    const dicomData = dcmjs.data.DicomMessage.readFile(arrayBuffer);
+  function loadDICOMBuffer(dicomBuffer) {
+    const dicomData = dcmjs.data.DicomMessage.readFile(dicomBuffer);
     const dataSet = dcmjs.data.DicomMetaDictionary.naturalizeDataset(dicomData.dict);
     dataSet._meta = dcmjs.data.DicomMetaDictionary.namifyDataset(dicomData.meta);
 
     const frameInfo = {
-      width : dataSet.Columns,
-      height : dataSet.Rows,
+      columns : dataSet.Columns,
+      rows : dataSet.Rows,
       bitsPerSample : dataSet.BitsAllocated,
-      componentCount : dataSet.SamplesPerPixel,
+      samplesPerPixel : dataSet.SamplesPerPixel,
       planarConfiguration : dataSet.PlanarConfiguration
     }
 
     frameInfoImage = frameInfo;
 
     iccBuffer = dataSet.OpticalPathSequence[0].ICCProfile[0];
-    iccBitStream = new Uint8Array(dataSet.OpticalPathSequence[0].ICCProfile[0], 0 , iccBuffer.length);
+    iccBitStream = new Uint8Array(iccBuffer, 0, iccBuffer.length);
+    inputBuffer = dataSet.PixelData[0]
+    inputBitStream = new Uint8Array(inputBuffer, 0, inputBuffer.length);
 
-    inputBitStream = new Uint8Array(dataSet.PixelData[0], 0, frameInfo.width * frameInfo.height * dataSet.SamplesPerPixel);
-
-    display(inputBitStream)
+    icctramsform = new libdicomicc.ColorManager(frameInfoImage, iccBitStream);
 
     transform();
   }
@@ -152,8 +135,8 @@ Copyright (c)
     .then((response) => {
       return response.arrayBuffer();
     })
-    .then((arrayBuffer) => {
-      loadArrayBuffer(arrayBuffer);
+    .then((dicomBuffer) => {
+      loadDICOMBuffer(dicomBuffer);
     });
   }
 
@@ -179,16 +162,6 @@ Copyright (c)
       load(e.target.options[e.target.selectedIndex].value);
     });
 
-    $('#useWASM').change(function() {
-      if (this.checked) {
-        icctramsform = icctramsformwasm;
-        transform();
-      } else {
-        icctramsform = icctramsformjs;
-        transform();
-      }
-    });
-
     $('#benchmark').click(function(e) {
       setTimeout(() => {
         transform();
@@ -196,20 +169,11 @@ Copyright (c)
     });
   }
 
-  libdicomicc().then(function(libdicomiccjs) {
-    console.log('libdicomiccjs', libdicomiccjs);
-    icctramsformjs = new libdicomiccjs.ICCCMSTransform();
-    icctramsform = icctramsformjs;
-    $('#useWASM').prop('checked', false);
-    main();
-  });
 
   libdicomiccWASM().then(function(libdicomiccwasm) {
     console.log('libdicomiccwasm', libdicomiccwasm);
-    icctramsformwasm = new libdicomiccwasm.ICCCMSTransform();
-    icctramsform = icctramsformwasm;
-    $('#useWASM').prop('checked', true);
-    $('#useWASM').prop('disabled', false);
+    libdicomicc = libdicomiccwasm;
+    main();
   });
 </script>
 </html>

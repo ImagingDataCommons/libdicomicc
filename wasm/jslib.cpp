@@ -1,4 +1,4 @@
-#include "ICCCMSTransform.hpp"
+#include "ColorManager.hpp"
 
 #include <emscripten.h>
 #include <emscripten/bind.h>
@@ -7,23 +7,19 @@ using namespace emscripten;
 
 EMSCRIPTEN_BINDINGS(FrameInfo) {
   value_object<FrameInfo>("FrameInfo")
-    .field("width", &FrameInfo::width)
-    .field("height", &FrameInfo::height)
+    .field("columns", &FrameInfo::columns)
+    .field("rows", &FrameInfo::rows)
     .field("bitsPerSample", &FrameInfo::bitsPerSample)
-    .field("componentCount", &FrameInfo::componentCount)
+    .field("samplesPerPixel", &FrameInfo::samplesPerPixel)
     .field("planarConfiguration", &FrameInfo::planarConfiguration)
   ;
 }
 
 EMSCRIPTEN_BINDINGS(ICCCMSTransform) {
-  class_<ICCCMSTransform>("ICCCMSTransform")
-    .constructor<>()
-    .function("getInputBuffer", &ICCCMSTransform::getInputBuffer)
-    .function("getICCBuffer", &ICCCMSTransform::getICCBuffer)
-    .function("getOutputBuffer", &ICCCMSTransform::getOutputBuffer)
-    .function("transform", &ICCCMSTransform::transform)
-    .function("getFrameInfo", &ICCCMSTransform::getFrameInfo)
-    .function("setFrameInfo", &ICCCMSTransform::setFrameInfo)
+  class_<ColorManager>("ColorManager")
+    .constructor<FrameInfo, const val>()
+    .function("GetFrameInfo", &ColorManager::GetFrameInfo)
+    .function("Transform", &ColorManager::Transform)
   ;
 }
 
@@ -34,5 +30,4 @@ std::string getExceptionMessage(intptr_t exceptionPtr) {
 
 EMSCRIPTEN_BINDINGS(ICCCMS) {
   emscripten::function("getExceptionMessage", &getExceptionMessage);
-  // function("doLeakCheck", &__lsan_do_recoverable_leak_check);
 }

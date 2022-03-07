@@ -35,8 +35,8 @@ at the root of this project and opening the file test/browser/index.html.
 ## Build Output
 
 The build script generates two files in the /dist folder:
-* libdicomicc.wasm - WebAssembly build of dicomicc library (wrapper to Little-CMS)
-* libdicomicc-js - JavaScript "glue" genereated by EMBIND
+* libdicomiccwasm.wasm - WebAssembly build of dicomicc library (wrapper to Little-CMS)
+* libdicomiccwasm.js - JavaScript "glue" genereated by EMBIND
 
 ## Publishing to NPM
 

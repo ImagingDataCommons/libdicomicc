@@ -15,7 +15,6 @@
     "node": ">=0.14"
   },
   "exports": {
-    ".": "./dist/libdicomicc.js",
     "./wasm": "./dist/libdicomiccwasm.wasm",
     "./wasmjs": "./dist/libdicomiccwasm.js"
   },

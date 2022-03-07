@@ -1,29 +1,5 @@
 include_directories(${DCMICC_INCLUDE_DIR} ${LCMS2_INCLUDE_DIR})
 
-add_executable(libdicomiccjs jslib.cpp)
-
-target_link_libraries(libdicomiccjs ${DCMICC_LIBRARIES})
-
-set_target_properties(
-    libdicomiccjs
-    PROPERTIES
-    LINK_FLAGS "\
-      --bind \
-      -s MODULARIZE=1 \
-      -s EXPORT_NAME=libdicomicc \
-      -s WASM=0 \
-      -s DISABLE_EXCEPTION_CATCHING=1 \
-      -s ASSERTIONS=0 \
-      -s NO_EXIT_RUNTIME=1 \
-      -s MALLOC=emmalloc \
-      -s ALLOW_MEMORY_GROWTH=1 \
-      -s TOTAL_MEMORY=1073741824 \
-      -s FILESYSTEM=0 \
-      -s EXPORTED_FUNCTIONS=[] \
-      -s EXPORTED_RUNTIME_METHODS=[ccall] \
-      -s LLD_REPORT_UNDEFINED \
-   ")
-
 # WASM BUILD
 add_executable(libdicomiccwasm jslib.cpp)
 

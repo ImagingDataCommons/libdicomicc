@@ -1,29 +1,65 @@
-# Building libdicomicc-js
+# Building
 
-libdicomicc-js utilizes CMake and EMSCRIPTEN for building.  The dependencies used
-for this build are as follows:
+[CMake](https://cmake.org/) is used to create standard build files.
 
-* CMake 3.16 or better
-* Emscripten SDK 1.39.4 or better
-* Modern browser (for running test/browser)
+## Building the native library
 
-**earlier versions may work but have not been tested**
+### Build dependencies
 
-## Building WASM (requires EMSCRIPTEN)
+* CMake 3.16
 
-```bash
-yarn build
+Earlier versions may work but have not been tested**.
+
+### Build procedure
+
+```none
+mkdir -p build
+cd build
+cmake ..
+make
+make install
 ```
 
-After building, you can run the browser based test by running an web server
-at the root of this project and opening the file test/browser/index.html.
+### Examples
 
-## Build Output
+An example is provided for using libdicomicc with [libdicom](https://github.com/hackermd/libdicom):
 
-The build script generates two files in the /dist folder:
-* libdicomiccwasm.wasm - WebAssembly build of dicomicc library (wrapper to Little-CMS)
-* libdicomiccwasm.js - JavaScript "glue" genereated by EMBIND
+```none
+cd examples/dicom
+mkdir -p build
+cd build
+cmake ..
+make
+./example
+```
 
-## Publishing to NPM
+## Building the WASM bindings
 
-TODO - Add steps to publish 
+### Build dependencies
+
+[Emscripten](https://emscripten.org/) is used to generate WASM bindings and creates the JavaScript API.
+
+The build dependencies used for building the WASM binding are as follows:
+
+* CMake 3.16
+* Emscripten SDK 1.39.4
+
+Earlier versions may work but have not been tested.
+
+### Build procedures
+
+```none
+yarn run build
+```
+
+### Examples
+
+After building, you can run the browser based test by running an web server at
+the ``wasm/examples`` directory:
+
+```none
+cd wasm/examples
+python -m SimpleHTTPServer 3000
+```
+
+and then pointing the browser to ``http://localhost:3000/browser``.

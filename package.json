@@ -2,7 +2,7 @@
   "name": "libdicomicc",
   "version": "0.1.0",
   "description": "WASM Build of libdicomicc",
-  "main": "dist/libdicomicc.js",
+  "main": "dist/libdicomiccwasm.js",
   "publishConfig": {
     "access": "public"
   },

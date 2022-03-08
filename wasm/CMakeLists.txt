@@ -20,8 +20,8 @@ set_target_properties(
       -s ALLOW_MEMORY_GROWTH=1 \
       -s TOTAL_MEMORY=1073741824 \
       -s FILESYSTEM=0 \
+      -s ERROR_ON_UNDEFINED_SYMBOLS=0 \
       -s EXPORTED_FUNCTIONS=[] \
       -s EXPORTED_RUNTIME_METHODS=[ccall] \
-      -s LLD_REPORT_UNDEFINED \
    ")
 

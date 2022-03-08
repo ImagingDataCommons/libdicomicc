@@ -1,8 +1,8 @@
 {
-  "name": "libdicomicc",
+  "name": "dicomicc",
   "version": "0.1.0",
   "description": "WASM Build of libdicomicc",
-  "main": "dist/libdicomiccwasm.js",
+  "main": "dist/dicomicc.js",
   "publishConfig": {
     "access": "public"
   },
@@ -15,8 +15,8 @@
     "node": ">=0.14"
   },
   "exports": {
-    "./wasm": "./dist/libdicomiccwasm.wasm",
-    "./wasmjs": "./dist/libdicomiccwasm.js"
+    "./dicomicc.js": "./dist/dicomicc.js",
+    "./dicomicc.wasm": "./dist/dicomicc.wasm"
   },
   "directories": {
     "test": "test"

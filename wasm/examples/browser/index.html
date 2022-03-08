@@ -6,7 +6,7 @@ Copyright (c)
 <head>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
-    <script type="text/javascript" src="../../../dist/libdicomiccwasm.js"></script>
+    <script type="text/javascript" src="../../../dist/dicomicc.js"></script>
     <script type="text/javascript" src="https://unpkg.com/dcmjs"></script>
 </head>
 <body>
@@ -18,7 +18,7 @@ Copyright (c)
       </p>
       <div class="row">
         <select id="imageSelector">
-          <option value="../../examples/fixtures/test.dcm" selected>test</option>
+          <option value="../fixtures/test.dcm" selected>test</option>
         </select>
         <button id="benchmark">Benchmark</button>
       </div>
@@ -46,7 +46,7 @@ Copyright (c)
 </body>
 
 <script>
-  let libdicomicc = undefined;
+  let dicomiccwasm = undefined;
   let icctramsform = undefined;
   let inputBitStream = undefined;
   let iccBitStream = undefined;
@@ -125,7 +125,7 @@ Copyright (c)
     inputBuffer = dataSet.PixelData[0]
     inputBitStream = new Uint8Array(inputBuffer, 0, inputBuffer.length);
 
-    icctramsform = new libdicomicc.ColorManager(frameInfoImage, iccBitStream);
+    icctramsform = new dicomiccwasm.ColorManager(frameInfoImage, iccBitStream);
 
     transform();
   }
@@ -170,9 +170,10 @@ Copyright (c)
   }
 
 
-  libdicomiccWASM().then(function(libdicomiccwasm) {
-    console.log('libdicomiccwasm', libdicomiccwasm);
-    libdicomicc = libdicomiccwasm;
+  console.log('dicomicc', dicomicc())
+  dicomicc().then(function(module) {
+    console.log('dicomicc module', module);
+    dicomiccwasm = module;
     main();
   });
 </script>

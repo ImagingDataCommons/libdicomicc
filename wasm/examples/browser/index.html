@@ -1,0 +1,179 @@
+<!--
+Copyright (c)
+-->
+<!DOCTYPE HTML>
+<html>
+<head>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script type="text/javascript" src="../../../dist/libdicomiccwasm.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/dcmjs"></script>
+</head>
+<body>
+<div class="container">
+    <div class="page-header">
+        <h1>ICC with WebAssembly</h1>
+        <p class="lead">
+          Select an image.
+      </p>
+      <div class="row">
+        <select id="imageSelector">
+          <option value="../../examples/fixtures/test.dcm" selected>test</option>
+        </select>
+        <button id="benchmark">Benchmark</button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+      <b>Image Properties</b>
+    </div>
+  </div>
+  <div class="row">
+      <div class="col-md-4">Transform Time: <span id="transformTime"></span></div>
+      <div class="col-md-4">Display Time: <span id="displayTime"></span></div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">Size: <span id="size"></span></div>
+      <div class="col-md-4">Bits Per Sample: <span id="bitsPerSample"></span></div>
+      <div class="col-md-4">Component Count: <span id="componentCount"></span></div>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-md-6">
+        <canvas id='myCanvas' width="512" height="512"/>
+    </div>
+  </div>
+</body>
+
+<script>
+  let libdicomicc = undefined;
+  let icctramsform = undefined;
+  let inputBitStream = undefined;
+  let iccBitStream = undefined;
+  let frameInfoImage = undefined;
+
+  function colorToCanvas(frameInfo, pixelData, imageData) {
+    let outOffset = 0;
+    let shift = 0;
+    if(frameInfo.bitsPerSample > 8) {
+      shift = 8;
+    }
+    let inOffset = 0;
+
+    for(var y=0; y < frameInfo.columns; y++) {
+      for (var x = 0; x < frameInfo.rows; x++) {
+        imageData.data[outOffset++] = pixelData[inOffset++] >> shift;
+        imageData.data[outOffset++] = pixelData[inOffset++] >> shift;
+        imageData.data[outOffset++] = pixelData[inOffset++] >> shift;
+        imageData.data[outOffset++] = 255;
+      }
+    }
+  }
+
+  function display(pixelData) {
+    const begin = performance.now(); // performance.now() returns value in milliseconds
+
+    var c = document.getElementById("myCanvas");
+    var ctx = c.getContext("2d");
+
+    c.width = frameInfoImage.columns;
+    c.height = frameInfoImage.rows;
+
+    var imageData = ctx.createImageData(frameInfoImage.columns, frameInfoImage.rows);
+    colorToCanvas(frameInfoImage, pixelData, imageData);
+    ctx.putImageData(imageData, 0, 0);
+
+    const end = performance.now();
+    $('#displayTime').text((end-begin).toFixed(2) + ' ms');
+  }
+
+  function transform() {
+    let begin = performance.now(); // performance.now() returns value in milliseconds
+
+    const correctedFrame = icctramsform.transform(inputBitStream);
+
+    let end = performance.now();
+
+    $('#transformTime').text((end-begin).toFixed(2) + ' ms');
+
+    // Display image properties
+    $('#size').text(''+frameInfoImage.columns + 'x' + frameInfoImage.rows);
+    $('#bitsPerSample').text(''+frameInfoImage.bitsPerSample +' bpp ');
+    $('#componentCount').text(''+frameInfoImage.samplesPerPixel);
+
+    // Display Output
+    display(correctedFrame);
+  }
+
+  function loadDICOMBuffer(dicomBuffer) {
+    const dicomData = dcmjs.data.DicomMessage.readFile(dicomBuffer);
+    const dataSet = dcmjs.data.DicomMetaDictionary.naturalizeDataset(dicomData.dict);
+    dataSet._meta = dcmjs.data.DicomMetaDictionary.namifyDataset(dicomData.meta);
+
+    const frameInfo = {
+      columns : dataSet.Columns,
+      rows : dataSet.Rows,
+      bitsPerSample : dataSet.BitsAllocated,
+      samplesPerPixel : dataSet.SamplesPerPixel,
+      planarConfiguration : dataSet.PlanarConfiguration
+    }
+
+    frameInfoImage = frameInfo;
+
+    iccBuffer = dataSet.OpticalPathSequence[0].ICCProfile[0];
+    iccBitStream = new Uint8Array(iccBuffer, 0, iccBuffer.length);
+    inputBuffer = dataSet.PixelData[0]
+    inputBitStream = new Uint8Array(inputBuffer, 0, inputBuffer.length);
+
+    icctramsform = new libdicomicc.ColorManager(frameInfoImage, iccBitStream);
+
+    transform();
+  }
+
+  function load(url) {
+    fetch(url)
+    .then((response) => {
+      return response.arrayBuffer();
+    })
+    .then((dicomBuffer) => {
+      loadDICOMBuffer(dicomBuffer);
+    });
+  }
+
+  function reset() {
+    const c = document.getElementById("myCanvas");
+    const ctx = c.getContext("2d");
+    ctx.fillRect(0,0,c.width, c.height);
+
+    $('#transformTime').text('');
+    $('#displayTime').text('');
+  }
+
+  function init(path) {
+    $('#imageSelector').val(path);
+    load(path);
+  }
+
+  function main() {
+    init('../../examples/fixtures/test.dcm');
+
+    $('#imageSelector').change(function(e) {
+      reset();
+      load(e.target.options[e.target.selectedIndex].value);
+    });
+
+    $('#benchmark').click(function(e) {
+      setTimeout(() => {
+        transform();
+      }, 1);
+    });
+  }
+
+
+  libdicomiccWASM().then(function(libdicomiccwasm) {
+    console.log('libdicomiccwasm', libdicomiccwasm);
+    libdicomicc = libdicomiccwasm;
+    main();
+  });
+</script>
+</html>

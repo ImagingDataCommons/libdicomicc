@@ -1,10 +1,3 @@
-# libicc
-C library for using ICC profiles to correct color images
+# libdicomicc-js
+JS/WebAssembly build of [Little-CMS](https://github.com/mm2/Little-CMS)
 
-## Installation
-
-```none
-./autogen.sh
-make
-make install
-```

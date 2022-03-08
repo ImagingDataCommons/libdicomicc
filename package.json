@@ -1,0 +1,53 @@
+{
+  "name": "libdicomicc",
+  "version": "0.1.0",
+  "description": "WASM Build of libdicomicc",
+  "main": "dist/libdicomiccwasm.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "package.json",
+    "README.md",
+    "dist"
+  ],
+  "engines": {
+    "node": ">=0.14"
+  },
+  "exports": {
+    "./wasm": "./dist/libdicomiccwasm.wasm",
+    "./wasmjs": "./dist/libdicomiccwasm.js"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "build": "bash build-wasm.sh",
+    "prepublishOnly": "yarn run build",
+    "clean": "rm -r ./build ./dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hackermd/libdicomicc"
+  },
+  "keywords": [
+    "ICC",
+    "Little-CMS",
+    "DICOM"
+  ],
+  "author": {
+    "name": "Markus D. Herrmann",
+    "email": "hackermd@protonmail.com"
+  },
+  "contributors": [
+    {
+      "name": "Davide Punzo",
+      "email": "punzodavide@hotmail.it"
+    }
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hackermd/libdicomicc/issues"
+  },
+  "homepage": "https://github.com/hackermd/libdicomicc#readme"
+}

@@ -3,10 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #include <dicom.h>
 
-#include "icc.h"
+#include "dicomicc.h"
 
 int main(int argc, char *argv[])
 {
@@ -20,14 +19,14 @@ int main(int argc, char *argv[])
     }
     file_path = argv[1];
 
-    DcmFile *file = dcm_file_create(file_path, 'r');
+    const DcmFile *file = dcm_file_create(file_path, 'r');
     if (file == NULL) {
         dcm_log_error("Reading DICOM file '%s' failed.", file_path);
         return EXIT_FAILURE;
     }
 
     dcm_log_info("Read metadata from DICOM file.");
-    DcmDataSet *metadata = dcm_file_read_metadata(file);
+    const DcmDataSet *metadata = dcm_file_read_metadata(file);
     if (metadata == NULL) {
         dcm_log_error("Reading DICOM file '%s' failed. "
                       "Could not read metadata.",
@@ -49,14 +48,9 @@ int main(int argc, char *argv[])
                                                               0x00280006);
     uint8_t planar_config = dcm_element_get_value_US(planar_config_element, 0);
 
-    dcm_log_info("Create ICC transform.");
-    const iccTransform *icc_transform = icc_transform_create(icc_profile,
-                                                             icc_profile_length,
-                                                             planar_config);
-
     dcm_log_info("Read frame #%u from DICOM file.", frame_number);
-    DcmBOT *bot = dcm_file_build_bot(file, metadata);
-    DcmFrame *frame = dcm_file_read_frame(file, metadata, bot, frame_number);
+    const DcmBOT *bot = dcm_file_build_bot(file, metadata);
+    const DcmFrame *frame = dcm_file_read_frame(file, metadata, bot, frame_number);
     if (frame == NULL) {
         dcm_log_error("Reading DICOM file '%s' failed. "
                       "Could not read frame #%u.",
@@ -68,8 +62,18 @@ int main(int argc, char *argv[])
     }
     const char *frame_value = dcm_frame_get_value(frame);
     uint32_t frame_length = dcm_frame_get_length(frame);
+    uint16_t columns = dcm_frame_get_columns(frame);
+    uint16_t rows = dcm_frame_get_rows(frame);
+
+    dcm_log_info("Create ICC transform.");
+    const DmcIccTransform *icc_transform = dcm_icc_transform_create(icc_profile,
+                                                                    icc_profile_length,
+                                                                    planar_config,
+                                                                    columns,
+                                                                    rows);
 
     char *corrected_frame_value = malloc(frame_length);
+    //this should be frame_length+1, but in this case we will have memory leaks
     if (corrected_frame_value == NULL) {
         dcm_log_error("Failed to allocate memory for frame buffer.");
         dcm_bot_destroy(bot);
@@ -80,20 +84,25 @@ int main(int argc, char *argv[])
     }
 
     dcm_log_info("Apply ICC transform to frame #%u", frame_number);
-    icc_transform_apply(icc_transform,
-                        frame_value,
-                        frame_length,
-                        corrected_frame_value);
+    dcm_icc_transform_apply(icc_transform,
+                            frame_value,
+                            corrected_frame_value);
 
-    dcm_log_info("Cleanup DICOM file.");
+    // clean
+    dcm_log_info("Cleanup DICOM bot.");
     dcm_bot_destroy(bot);
+    dcm_log_info("Cleanup DICOM frame.");
     dcm_frame_destroy(frame);
+    dcm_log_info("Cleanup DICOM metadata.");
     dcm_dataset_destroy(metadata);
+    dcm_log_info("Cleanup DICOM file.");
     dcm_file_destroy(file);
-    free(corrected_frame_value);
 
     dcm_log_info("Cleanup ICC transform.");
-    icc_transform_destroy(icc_transform);
+    dcm_icc_transform_destroy(icc_transform);
+
+    dcm_log_info("Cleanup output image.");
+    free(corrected_frame_value);
 
     return EXIT_SUCCESS;
 }

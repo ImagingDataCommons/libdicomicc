@@ -1,0 +1,43 @@
+#================================
+# Building
+#================================
+if(EMSCRIPTEN)
+  set(BUILD_SHARED_LIBS OFF)
+else()
+  set(BUILD_SHARED_LIBS ON)
+endif()
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+include_directories(${LCMS2_INCLUDE_DIR})
+
+set(DCMICC_LIBRARIES "libdicomicc" CACHE INTERNAL "" FORCE)
+set(DCMICC_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}" CACHE INTERNAL "" FORCE)
+
+add_library(${DCMICC_LIBRARIES} dicomicc.h dicomicc.c)
+set_target_properties(${DCMICC_LIBRARIES} PROPERTIES VERSION
+    ${LIBDICOMICC_VERSION})
+target_link_libraries(${DCMICC_LIBRARIES} ${LCMS2_LIBRARIES} m)
+
+#================================
+# Install
+#================================
+include(InstallRequiredSystemLibraries)
+
+install(TARGETS ${DCMICC_LIBRARIES} DESTINATION lib COMPONENT Runtime)
+
+#================================
+# Packaging
+#================================
+
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${DCMICC_LIBRARIES})
+set(CPACK_PACKAGE_VENDOR ${DCMICC_LIBRARIES})
+set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+set(CPACK_PACKAGE_VERSION_MAJOR ${LIBDICOMICC_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${LIBDICOMICC_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${LIBDICOMICC_VERSION_PATCH})
+set(CPACK_GENERATOR "TGZ")
+include(CPack)

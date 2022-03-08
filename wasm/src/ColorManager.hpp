@@ -47,7 +47,7 @@ class ColorManager {
   ///
   /// Returns a TypedArray of the buffer with the resulting pixel data.
   /// </summary>
-  val Transform(const val &inputFrame) {
+  val transform(const val &inputFrame) {
 
     const std::vector<uint8_t> inputFrameVector =
       convertJSArrayToNumberVector<uint8_t>(inputFrame);
@@ -72,7 +72,7 @@ class ColorManager {
   /// <summary>
   /// returns the FrameInfo object.
   /// </summary>
-  const FrameInfo& GetFrameInfo() const {
+  const FrameInfo& getFrameInfo() const {
       return this->frameInfo;
   }
 

@@ -90,14 +90,14 @@ Copyright (c)
   function transform() {
     let begin = performance.now(); // performance.now() returns value in milliseconds
 
-    const correctedFrame = icctramsform.Transform(inputBitStream);
+    const correctedFrame = icctramsform.transform(inputBitStream);
 
     let end = performance.now();
 
     $('#transformTime').text((end-begin).toFixed(2) + ' ms');
 
     // Display image properties
-    $('#size').text(''+frameInfoImage.width + 'x' + frameInfoImage.height);
+    $('#size').text(''+frameInfoImage.columns + 'x' + frameInfoImage.rows);
     $('#bitsPerSample').text(''+frameInfoImage.bitsPerSample +' bpp ');
     $('#componentCount').text(''+frameInfoImage.samplesPerPixel);
 

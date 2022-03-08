@@ -22,12 +22,9 @@
     "test": "test"
   },
   "scripts": {
-    "build": "bash build.sh",
-    "build:ci": "yarn run build",
+    "build": "bash build-wasm.sh",
     "prepublishOnly": "yarn run build",
-    "postpublish": "node -p -e \"require('./package.json').version\" > success_version.txt",
-    "build:ui": "webpack --config ./.webpack/webpack.config.js",
-    "start": " webpack-dev-server --config ./.webpack/webpack.config.js"
+    "clean": "rm -r ./build ./dist"
   },
   "repository": {
     "type": "git",
@@ -39,24 +36,18 @@
     "DICOM"
   ],
   "author": {
-    "name": "",
-    "email": "",
-    "url": ""
+    "name": "Markus D. Herrmann",
+    "email": "hackermd@protonmail.com"
   },
-  "license": "",
+  "contributors": [
+    {
+      "name": "Davide Punzo",
+      "email": "punzodavide@hotmail.it"
+    }
+  ],
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/hackermd/libdicomicc/issues"
   },
-  "homepage": "https://github.com/hackermd/libdicomicc#readme",
-  "devDependencies": {
-    "@babel/core": "^7.12.16",
-    "@babel/preset-env": "^7.12.16",
-    "babel-loader": "^8.2.2",
-    "clean-webpack-plugin": "^4.0.0",
-    "html-loader": "^1.3.0",
-    "html-webpack-plugin": "^4.3.0",
-    "webpack": "^5.22.0",
-    "webpack-cli": "^4.5.0",
-    "webpack-merge": "^5.7.3"
-  }
+  "homepage": "https://github.com/hackermd/libdicomicc#readme"
 }

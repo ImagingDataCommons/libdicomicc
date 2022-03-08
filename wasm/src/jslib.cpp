@@ -15,11 +15,11 @@ EMSCRIPTEN_BINDINGS(FrameInfo) {
   ;
 }
 
-EMSCRIPTEN_BINDINGS(ICCCMSTransform) {
+EMSCRIPTEN_BINDINGS(ColorManager) {
   class_<ColorManager>("ColorManager")
     .constructor<FrameInfo, const val>()
-    .function("GetFrameInfo", &ColorManager::GetFrameInfo)
-    .function("Transform", &ColorManager::Transform)
+    .function("getFrameInfo", &ColorManager::getFrameInfo)
+    .function("transform", &ColorManager::transform)
   ;
 }
 
@@ -28,6 +28,6 @@ std::string getExceptionMessage(intptr_t exceptionPtr) {
   return std::string(reinterpret_cast<std::exception *>(exceptionPtr)->what());
 }
 
-EMSCRIPTEN_BINDINGS(ICCCMS) {
+EMSCRIPTEN_BINDINGS(dicomicc) {
   emscripten::function("getExceptionMessage", &getExceptionMessage);
 }

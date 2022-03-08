@@ -1,7 +1,7 @@
 include_directories(${DCMICC_INCLUDE_DIR} ${LCMS2_INCLUDE_DIR})
 
 # WASM BUILD
-add_executable(libdicomiccwasm jslib.cpp)
+add_executable(libdicomiccwasm src/jslib.cpp)
 
 target_link_libraries(libdicomiccwasm ${DCMICC_LIBRARIES})
 

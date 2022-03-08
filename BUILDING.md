@@ -9,20 +9,6 @@ for this build are as follows:
 
 **earlier versions may work but have not been tested**
 
-## Building C example
-
-```bash
-sh build-native.sh
-```
-
-After building, you can run the C based test by executing
-
-```bash
-example test.dcm
-```
-
-in the folder build/buin
-
 ## Building WASM (requires EMSCRIPTEN)
 
 ```bash

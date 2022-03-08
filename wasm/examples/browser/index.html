@@ -9,6 +9,7 @@ Copyright (c)
     <script type="text/javascript" src="../../../dist/dicomicc.js"></script>
     <script type="text/javascript" src="https://unpkg.com/dcmjs"></script>
 </head>
+
 <body>
 <div class="container">
     <div class="page-header">
@@ -18,7 +19,7 @@ Copyright (c)
       </p>
       <div class="row">
         <select id="imageSelector">
-          <option value="../fixtures/test.dcm" selected>test</option>
+          <option value="../../examples/fixtures/test.dcm" selected>test</option>
         </select>
         <button id="benchmark">Benchmark</button>
       </div>
@@ -169,11 +170,9 @@ Copyright (c)
     });
   }
 
-
-  console.log('dicomicc', dicomicc())
-  dicomicc().then(function(module) {
-    console.log('dicomicc module', module);
-    dicomiccwasm = module;
+  dicomicc().then(function(wasm) {
+    console.log('dicomicc: ', wasm);
+    dicomiccwasm = wasm;
     main();
   });
 </script>

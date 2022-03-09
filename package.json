@@ -2,7 +2,7 @@
   "name": "dicomicc",
   "version": "0.1.0",
   "description": "WASM bindings of dicomicc C library",
-  "main": "dist/dicomicc.js",
+  "main": "dist/dicomiccwasm.js",
   "publishConfig": {
     "access": "public"
   },
@@ -15,8 +15,8 @@
     "node": ">=0.14"
   },
   "exports": {
-    "./dicomicc.js": "./dist/dicomicc.js",
-    "./dicomicc.wasm": "./dist/dicomicc.wasm"
+    "./dicomiccwasm.js": "./dist/dicomiccwasm.js",
+    "./dicomiccwasm.wasm": "./dist/dicomiccwasm.wasm"
   },
   "directories": {
     "test": "test"

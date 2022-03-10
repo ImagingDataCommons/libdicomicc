@@ -11,9 +11,9 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-find_library(LCM2_LIBRARY lcm2 PATH_SUFFIXES lcm2)
-find_path(LCM2_INCLUDE_DIR lcm2.h PATH_SUFFIXES lcm2)
-if(NOT LCM2_LIBRARY)
+find_library(LCMS2_LIBRARY lcms2 PATH_SUFFIXES lcms2)
+find_path(LCMS2_INCLUDE_DIR lcms2.h PATH_SUFFIXES lcms2)
+if(NOT LCMS2_LIBRARY)
   message(FATAL_ERROR "lcm2 library is required but was not found")
 endif()
 
@@ -31,13 +31,12 @@ endif()
 
 
 add_executable(dicomicc-example example.c)
-target_include_directories(dicomicc-example PUBLIC 
-                           ${LCM2_INCLUDE_DIR}
+target_include_directories(dicomicc-example PUBLIC
+                           ${LCMS2_INCLUDE_DIR}
                            ${DICOM_INCLUDE_DIR}
                            ${DICOMICC_INCLUDE_DIR})
 target_link_libraries(dicomicc-example
-                       deepLook
-                       ${LCM2_LIBRARY}
+                       ${LCMS2_LIBRARY}
                        ${DICOM_LIBRARY}
                        ${DICOMICC_LIBRARY})
 

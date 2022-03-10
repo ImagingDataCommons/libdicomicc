@@ -26,6 +26,7 @@ target_link_libraries(${DICOMICC_LIBRARY} ${LCMS2_LIBRARY} m)
 include(InstallRequiredSystemLibraries)
 
 install(TARGETS ${DICOMICC_LIBRARY} DESTINATION lib COMPONENT Runtime)
+install(FILES "${PROJECT_SOURCE_DIR}/src/dicomicc.h" DESTINATION include)
 
 #================================
 # Packaging

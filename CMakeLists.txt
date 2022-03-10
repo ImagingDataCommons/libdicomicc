@@ -33,13 +33,23 @@ endif()
 
 if(EMSCRIPTEN)
   set(BUILD_SHARED_LIBS OFF)
-  add_subdirectory(thirdparty)
+  include(ExternalProject)
+  ExternalProject_Add(lcms2
+    GIT_REPOSITORY    https://github.com/mm2/Little-CMS.git
+    GIT_TAG           master
+    BUILD_IN_SOURCE   1
+    CONFIGURE_COMMAND ./configure -enable-static
+    BUILD_COMMAND     make
+    INSTALL_COMMAND   ""
+    TEST_COMMAND      ""
+    )
+
+  set(LCMS2_LIBRARY "${CMAKE_BINARY_DIR}/lcms2-prefix/src/lcms2/src/.libs/liblcms2.a" CACHE INTERNAL "" FORCE)
+  set(LCMS2_INCLUDE_DIR "${CMAKE_BINARY_DIR}/lcms2-prefix/src/lcms2/include" CACHE INTERNAL "" FORCE)
+
+  add_subdirectory(src)
+  add_subdirectory(wasm)
 else()
   set(BUILD_SHARED_LIBS ON)
-endif()
-
-add_subdirectory(src)
-
-if(EMSCRIPTEN)
-  add_subdirectory(wasm)
+  add_subdirectory(src)
 endif()

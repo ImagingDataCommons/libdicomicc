@@ -11,7 +11,7 @@ mkdir -p dist
 echo "~~~ CONFIGURE ~~~"
 (cd build && emcmake cmake ..)
 echo "~~~ MAKE ~~~"
-(cd build && emmake make -j 8)
+(cd build && emmake make)
 echo "~~~ COPY ~~~ "
 cp ./build/wasm/dicomiccwasm.js ./dist
 cp ./build/wasm/dicomiccwasm.wasm ./dist

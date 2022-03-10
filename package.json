@@ -24,7 +24,7 @@
   "scripts": {
     "build": "bash build-wasm.sh",
     "prepublishOnly": "yarn run build",
-    "clean": "rm -r ./build ./dist"
+    "clean": "rm -rf ./build ./dist"
   },
   "repository": {
     "type": "git",

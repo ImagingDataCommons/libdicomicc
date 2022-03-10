@@ -30,7 +30,7 @@ mkdir -p build
 cd build
 cmake ..
 make
-./example
+./bin/dicomicc-example ...
 ```
 
 The examples expects the lcms2, dicom, and dicomicc libraries to be already installed.
@@ -58,10 +58,9 @@ After the build procedure, the generated JavaScript and WebAssembly files will b
 
 ### Examples
 
-After building the WebAssembly bindings and JavaScript API, the browser based example can be run by starting a web server in the ``wasm/examples`` directory:
+After building the WebAssembly bindings and JavaScript API, the browser based example can be run by starting a web server in the ``root`` directory:
 
 ```none
-cd wasm/examples
 python -m SimpleHTTPServer  # Python 2
 ```
 

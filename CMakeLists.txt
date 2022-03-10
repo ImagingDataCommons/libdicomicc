@@ -14,8 +14,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # so that we will find config.h
 include_directories("${PROJECT_BINARY_DIR}")
 
-# configure a header file to pass some of the CMake settings
-# to the source code
+# configure a header file to pass some of the CMake settings to the source code
 configure_file ("${PROJECT_SOURCE_DIR}/config.h.in"
                 "${PROJECT_BINARY_DIR}/config.h")
 
@@ -34,15 +33,23 @@ endif()
 
 if(EMSCRIPTEN)
   set(BUILD_SHARED_LIBS OFF)
+  include(ExternalProject)
+  ExternalProject_Add(lcms2
+    GIT_REPOSITORY    https://github.com/mm2/Little-CMS.git
+    GIT_TAG           master
+    BUILD_IN_SOURCE   1
+    CONFIGURE_COMMAND ./configure -enable-static
+    BUILD_COMMAND     make
+    INSTALL_COMMAND   ""
+    TEST_COMMAND      ""
+    )
+
+  set(LCMS2_LIBRARY "${CMAKE_BINARY_DIR}/lcms2-prefix/src/lcms2/src/.libs/liblcms2.a" CACHE INTERNAL "" FORCE)
+  set(LCMS2_INCLUDE_DIR "${CMAKE_BINARY_DIR}/lcms2-prefix/src/lcms2/include" CACHE INTERNAL "" FORCE)
+
+  add_subdirectory(src)
+  add_subdirectory(wasm)
 else()
   set(BUILD_SHARED_LIBS ON)
-endif()
-
-add_subdirectory(thirdparty)
-
-add_subdirectory(src)
-
-# js wrapper
-if(EMSCRIPTEN)
-  add_subdirectory(wasm)
+  add_subdirectory(src)
 endif()

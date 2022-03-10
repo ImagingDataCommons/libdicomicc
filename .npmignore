@@ -1,0 +1,7 @@
+node_modules
+build
+examples
+src
+thirdparty
+CMakeLists.txt
+config.h.in

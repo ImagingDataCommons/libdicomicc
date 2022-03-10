@@ -1,7 +1,7 @@
 {
   "name": "dicomicc",
   "version": "0.1.0-0",
-  "description": "WASM bindings of dicomicc C library",
+  "description": "WASM bindings and JavaScript API for the dicomicc C library",
   "main": "dist/dicomiccwasm.js",
   "publishConfig": {
     "access": "public"

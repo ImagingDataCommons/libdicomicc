@@ -13,8 +13,8 @@ echo "~~~ CONFIGURE ~~~"
 echo "~~~ MAKE ~~~"
 (cd build && emmake make -j 8)
 echo "~~~ COPY ~~~ "
-cp ./build/wasm/libdicomiccwasm.js ./dist
-cp ./build/wasm/libdicomiccwasm.wasm ./dist
+cp ./build/wasm/dicomiccwasm.js ./dist
+cp ./build/wasm/dicomiccwasm.wasm ./dist
 
 echo "~~~ BUILD:"
 (cd build && dir)

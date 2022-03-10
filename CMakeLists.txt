@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.16)
 
-project (libdicomicc)
+project (dicomicc)
 
-set(LIBDICOMICC_VERSION_MAJOR 0)
-set(LIBDICOMICC_VERSION_MINOR 1)
-set(LIBDICOMICC_VERSION_PATCH 0)
-set(LIBDICOMICC_VERSION "${LIBDICOMICC_VERSION_MAJOR}.${LIBDICOMICC_VERSION_MINOR}.${LIBDICOMICC_VERSION_PATCH}")
+set(DICOMICC_VERSION_MAJOR 0)
+set(DICOMICC_VERSION_MINOR 1)
+set(DICOMICC_VERSION_PATCH 0)
+set(DICOMICC_VERSION "${DICOMICC_VERSION_MAJOR}.${DICOMICC_VERSION_MINOR}.${DICOMICC_VERSION_PATCH}")
 
 # Find includes in the build directories
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -16,9 +16,8 @@ include_directories("${PROJECT_BINARY_DIR}")
 
 # configure a header file to pass some of the CMake settings
 # to the source code
-configure_file (
-  "${PROJECT_SOURCE_DIR}/config.h.in"
-  "${PROJECT_BINARY_DIR}/config.h")
+configure_file ("${PROJECT_SOURCE_DIR}/config.h.in"
+                "${PROJECT_BINARY_DIR}/config.h")
 
 # Compiler options
 set(CMAKE_CXX_STANDARD 11)

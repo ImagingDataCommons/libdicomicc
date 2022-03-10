@@ -1,17 +1,15 @@
-include_directories(${DCMICC_INCLUDE_DIR} ${LCMS2_INCLUDE_DIR})
+include_directories(${DICOMICC_INCLUDE_DIR} ${LCMS2_INCLUDE_DIR})
 
 # WASM BUILD
-add_executable(libdicomiccwasm src/jslib.cpp)
-
-target_link_libraries(libdicomiccwasm ${DCMICC_LIBRARIES})
-
+add_executable(dicomiccwasm src/jslib.cpp)
+target_link_libraries(dicomiccwasm ${DICOMICC_LIBRARY})
 set_target_properties(
-  libdicomiccwasm
+  dicomiccwasm
     PROPERTIES
     LINK_FLAGS "\
       --bind \
       -s MODULARIZE=1 \
-      -s EXPORT_NAME=libdicomiccWASM \
+      -s EXPORT_NAME=dicomicc \
       -s WASM=1 \
       -s DISABLE_EXCEPTION_CATCHING=1 \
       -s ASSERTIONS=0 \

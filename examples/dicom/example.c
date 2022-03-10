@@ -3,9 +3,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include <dicom.h>
 
-#include "dicomicc.h"
+#include <dicomicc.h>
 
 int main(int argc, char *argv[])
 {
@@ -86,9 +87,9 @@ int main(int argc, char *argv[])
     dcm_log_info("Apply ICC transform to frame #%u", frame_number);
     dcm_icc_transform_apply(icc_transform,
                             frame_value,
+                            frame_length,
                             corrected_frame_value);
 
-    // clean
     dcm_log_info("Cleanup DICOM bot.");
     dcm_bot_destroy(bot);
     dcm_log_info("Cleanup DICOM frame.");

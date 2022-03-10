@@ -13,7 +13,7 @@ struct _DmcIccTransform {
 };
 
 const char *dcm_icc_get_version(void) {
-    return LIBDICOMICC_VER;
+    return DCMICC_VERSION;
 }
 
 DmcIccTransform *dcm_icc_transform_create(const char *icc_profile,

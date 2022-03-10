@@ -34,15 +34,13 @@ endif()
 
 if(EMSCRIPTEN)
   set(BUILD_SHARED_LIBS OFF)
+  add_subdirectory(thirdparty)
 else()
   set(BUILD_SHARED_LIBS ON)
 endif()
 
-add_subdirectory(thirdparty)
-
 add_subdirectory(src)
 
-# js wrapper
 if(EMSCRIPTEN)
   add_subdirectory(wasm)
 endif()

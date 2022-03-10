@@ -4,7 +4,7 @@ dist/*
 !build/.gitpreserve
 !build-native/.gitpreserve
 !dist/.gitpreserve
-**/build/*
+**/**/build/*
 
 # Compiled Object files
 *.slo

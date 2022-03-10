@@ -17,7 +17,7 @@ file(GLOB SRCS src/*.c)
 file(GLOB HDRS include/*.h)
 
 add_library(${LCMS2_LIBRARY} STATIC ${SRCS} ${HDRS})
-target_include_directories(${LCMS2_LIBRARY} PUBLIC "${LCMS2_INCLUDE_DIR}")
+target_include_directories(${LCMS2_LIBRARY} PRIVATE "${LCMS2_INCLUDE_DIR}")
 set_target_properties(${LCMS2_LIBRARY}
                       PROPERTIES
                       OUTPUT_NAME "${LIBTARGET}"

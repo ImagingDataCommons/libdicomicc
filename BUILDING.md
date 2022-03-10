@@ -30,7 +30,7 @@ mkdir -p build
 cd build
 cmake ..
 make
-./example
+./bin/dicomicc-example ...
 ```
 
 The examples expects the lcms2, dicom, and dicomicc libraries to be already installed.

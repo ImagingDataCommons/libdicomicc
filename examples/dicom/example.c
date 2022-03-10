@@ -20,14 +20,14 @@ int main(int argc, char *argv[])
     }
     file_path = argv[1];
 
-    const DcmFile *file = dcm_file_create(file_path, 'r');
+    DcmFile *file = dcm_file_create(file_path, 'r');
     if (file == NULL) {
         dcm_log_error("Reading DICOM file '%s' failed.", file_path);
         return EXIT_FAILURE;
     }
 
     dcm_log_info("Read metadata from DICOM file.");
-    const DcmDataSet *metadata = dcm_file_read_metadata(file);
+    DcmDataSet *metadata = dcm_file_read_metadata(file);
     if (metadata == NULL) {
         dcm_log_error("Reading DICOM file '%s' failed. "
                       "Could not read metadata.",
@@ -37,21 +37,19 @@ int main(int argc, char *argv[])
     }
 
     dcm_log_info("Get ICC profile");
-    const DcmElement *optical_path_element = dcm_dataset_get(metadata,
-                                                             0x00480105);
-    const DcmSequence *optical_path_seq = dcm_element_get_value_SQ(optical_path_element);
-    const DcmDataSet *optical_path_item = dcm_sequence_get(optical_path_seq, 0);
-    const DcmElement *icc_profile_element = dcm_dataset_get(optical_path_item,
-                                                            0x00282000);
+    DcmElement *optical_path_element = dcm_dataset_get(metadata, 0x00480105);
+    DcmSequence *optical_path_seq = dcm_element_get_value_SQ(optical_path_element);
+    DcmDataSet *optical_path_item = dcm_sequence_get(optical_path_seq, 0);
+    DcmElement *icc_profile_element = dcm_dataset_get(optical_path_item,
+                                                      0x00282000);
     uint32_t icc_profile_length = dcm_element_get_length(icc_profile_element);
     const char *icc_profile = dcm_element_get_value_OB(icc_profile_element);
-    const DcmElement *planar_config_element = dcm_dataset_get(metadata,
-                                                              0x00280006);
+    DcmElement *planar_config_element = dcm_dataset_get(metadata, 0x00280006);
     uint8_t planar_config = dcm_element_get_value_US(planar_config_element, 0);
 
     dcm_log_info("Read frame #%u from DICOM file.", frame_number);
-    const DcmBOT *bot = dcm_file_build_bot(file, metadata);
-    const DcmFrame *frame = dcm_file_read_frame(file, metadata, bot, frame_number);
+    DcmBOT *bot = dcm_file_build_bot(file, metadata);
+    DcmFrame *frame = dcm_file_read_frame(file, metadata, bot, frame_number);
     if (frame == NULL) {
         dcm_log_error("Reading DICOM file '%s' failed. "
                       "Could not read frame #%u.",
@@ -67,11 +65,11 @@ int main(int argc, char *argv[])
     uint16_t rows = dcm_frame_get_rows(frame);
 
     dcm_log_info("Create ICC transform.");
-    const DmcIccTransform *icc_transform = dcm_icc_transform_create(icc_profile,
-                                                                    icc_profile_length,
-                                                                    planar_config,
-                                                                    columns,
-                                                                    rows);
+    DmcIccTransform *icc_transform = dcm_icc_transform_create(icc_profile,
+                                                              icc_profile_length,
+                                                              planar_config,
+                                                              columns,
+                                                              rows);
 
     char *corrected_frame_value = malloc(frame_length);
     //this should be frame_length+1, but in this case we will have memory leaks

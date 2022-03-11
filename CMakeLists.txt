@@ -38,7 +38,7 @@ if(EMSCRIPTEN)
     GIT_REPOSITORY    https://github.com/mm2/Little-CMS.git
     GIT_TAG           master
     BUILD_IN_SOURCE   1
-    CONFIGURE_COMMAND ./configure -enable-static
+    CONFIGURE_COMMAND autoreconf -fvi && ./configure
     BUILD_COMMAND     make
     INSTALL_COMMAND   ""
     TEST_COMMAND      ""

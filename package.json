@@ -14,10 +14,6 @@
   "engines": {
     "node": ">=0.14"
   },
-  "exports": {
-    "./dicomiccwasm.js": "./dist/dicomiccwasm.js",
-    "./dicomiccwasm.wasm": "./dist/dicomiccwasm.wasm"
-  },
   "directories": {
     "test": "test"
   },

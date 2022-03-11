@@ -49,10 +49,10 @@ jobs:
         git pull
         ./emsdk install latest
         ./emsdk activate latest
-        source ./emsdk_env.sh
 
     - name: Build and install library
       run: |
+        source ./emsdk/emsdk_env.sh
         mkdir build
         cd build
         cmake ..
@@ -60,7 +60,9 @@ jobs:
         sudo make install
 
     - name: Build WebAssembly bindings
-      run: yarn run build
+      run: |
+        source ./emsdk/emsdk_env.sh
+        yarn run build
 
     - name: Perform npm package publish dry run
       run: npm publish . --dry-run

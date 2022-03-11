@@ -1,0 +1,93 @@
+name: build and test
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  linux:
+    name: Build and run tests on Linux
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install build and test dependencies
+      run: |
+        export DEBIAN_FRONTEND=noninteractive
+        export DEBCONF_NONINTERACTIVE_SEEN=true
+        sudo apt-get update
+        sudo apt-get install -y --no-install-suggests --no-install-recommends \
+          autogen \
+          dh-autoreconf \
+          build-essential \
+          clang \
+          cmake \
+          git \
+          liblcms2-dev \
+          llvm \
+          libtool \
+          nodejs \
+          npm \
+          pkg-config \
+          python3 \
+          shtool \
+          valgrind
+        sudo apt-get clean
+
+    - name: Install yarn package manager
+      run: npm install --global yarn
+
+    - name: Build and install Emscripten SDK
+      run: |
+        git clone https://github.com/emscripten-core/emsdk.git
+        cd emsdk
+        git pull
+        ./emsdk install latest
+        ./emsdk activate latest
+        source ./emsdk_env.sh
+
+    - name: Build and install library
+      run: |
+        mkdir build
+        cd build
+        cmake ..
+        make
+        sudo make install
+
+    - name: Build WebAssembly bindings
+      run: yarn run build
+
+    - name: Perform npm package publish dry run
+      run: yarn publish . --dry-run
+
+  macos:
+    name: Build and run tests on macOS
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install build and test dependencies
+      run: |
+        brew update
+        brew upgrade
+        brew install autoconf automake cmake emscripten libtool llvm node yarn
+
+    - name: Build and install library
+      run: |
+        mkdir build
+        cd build
+        cmake --prefix='/usr/local' ..
+        make
+        make install
+
+    - name: Build WebAssembly bindings
+      run: yarn run build
+
+    - name: Perform npm package publish dry run
+      run: yarn publish . --dry-run

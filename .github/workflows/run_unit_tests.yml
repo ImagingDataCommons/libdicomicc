@@ -63,7 +63,7 @@ jobs:
       run: yarn run build
 
     - name: Perform npm package publish dry run
-      run: yarn publish . --dry-run
+      run: npm publish . --dry-run
 
   macos:
     name: Build and run tests on macOS
@@ -90,4 +90,4 @@ jobs:
       run: yarn run build
 
     - name: Perform npm package publish dry run
-      run: yarn publish . --dry-run
+      run: npm publish . --dry-run

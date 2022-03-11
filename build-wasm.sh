@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 # Disable exit on non 0
-set -uE
+set -euo pipefail
 
 mkdir -p build
 mkdir -p dist

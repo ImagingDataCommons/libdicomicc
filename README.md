@@ -1,3 +1,6 @@
+[![Build Status](https://github.com/hackermd/libdicomicc/actions/workflows/run_unit_tests.yml/badge.svg)](https://github.com/hackermd/libdicomicc/actions)
+[![NPM version](https://badge.fury.io/js/dicomicc.svg)](http://badge.fury.io/js/dicomicc)
+
 # libdicomicc
 
 C library for applying [ICC profiles](https://www.color.org/icc_specs2.xalter) to color images.

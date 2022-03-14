@@ -62,6 +62,7 @@ jobs:
     - name: Build WebAssembly bindings
       run: |
         source ./emsdk/emsdk_env.sh
+        yarn run clean
         yarn run build
 
     - name: Perform npm package publish dry run
@@ -78,7 +79,7 @@ jobs:
       run: |
         brew update
         brew upgrade
-        brew install autoconf automake cmake emscripten libtool llvm node yarn
+        brew install autoconf automake cmake emscripten libtool lcm2 llvm node yarn
 
     - name: Build and install library
       run: |
@@ -89,7 +90,9 @@ jobs:
         make install
 
     - name: Build WebAssembly bindings
-      run: yarn run build
+      run: |
+        yarn run clean
+        yarn run build
 
     - name: Perform npm package publish dry run
       run: npm publish . --dry-run

@@ -64,4 +64,4 @@ After building the WebAssembly bindings and JavaScript API, the browser based ex
 python -m SimpleHTTPServer  # Python 2
 ```
 
-and then pointing the browser to ``http://localhost:8000/browser``.
+and then pointing the browser to ``http://localhost:8000/wasm/examples/browser/``.

@@ -1,6 +1,6 @@
 {
   "name": "dicomicc",
-  "version": "0.1.0-0",
+  "version": "0.1.0",
   "description": "WASM bindings and JavaScript API for the dicomicc C library",
   "main": "dist/dicomiccwasm.js",
   "publishConfig": {
@@ -14,17 +14,13 @@
   "engines": {
     "node": ">=0.14"
   },
-  "exports": {
-    "./dicomiccwasm.js": "./dist/dicomiccwasm.js",
-    "./dicomiccwasm.wasm": "./dist/dicomiccwasm.wasm"
-  },
   "directories": {
     "test": "test"
   },
   "scripts": {
     "build": "bash build-wasm.sh",
     "prepublishOnly": "yarn run build",
-    "clean": "rm -rf ./build ./dist"
+    "clean": "rm -rf ./build ./dist ./node_modules"
   },
   "repository": {
     "type": "git",

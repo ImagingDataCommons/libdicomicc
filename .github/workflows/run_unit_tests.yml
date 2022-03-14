@@ -42,6 +42,14 @@ jobs:
     - name: Install yarn package manager
       run: npm install --global yarn
 
+    - name: Build and install library
+      run: |
+        mkdir build
+        cd build
+        cmake ..
+        make
+        sudo make install
+
     - name: Build and install Emscripten SDK
       run: |
         git clone https://github.com/emscripten-core/emsdk.git
@@ -49,20 +57,13 @@ jobs:
         git pull
         ./emsdk install latest
         ./emsdk activate latest
-
-    - name: Build and install library
-      run: |
-        source ./emsdk/emsdk_env.sh
-        mkdir build
-        cd build
-        cmake ..
-        make
-        sudo make install
+        source ./emsdk_env.sh
 
     - name: Build WebAssembly bindings
       run: |
-        source ./emsdk/emsdk_env.sh
         yarn run clean
+        sh ./emsdk/emsdk activate latest
+        source ./emsdk/emsdk_env.sh
         yarn run build
 
     - name: Perform npm package publish dry run
@@ -79,7 +80,16 @@ jobs:
       run: |
         brew update
         brew upgrade
-        brew install autoconf automake cmake emscripten libtool lcm2 llvm node yarn
+        brew install \
+          autoconf \
+          automake \
+          cmake \
+          emscripten \
+          libtool \
+          little-cms2 \
+          llvm \
+          node \
+          yarn
 
     - name: Build and install library
       run: |

@@ -17,6 +17,6 @@ cp ./build/wasm/dicomiccwasm.js ./dist
 cp ./build/wasm/dicomiccwasm.wasm ./dist
 
 echo "~~~ BUILD:"
-(cd build && dir)
+(cd build && ls)
 echo "~~~ DIST:"
-(cd dist && dir)
+(cd dist && ls)

@@ -21,18 +21,20 @@ class ColorManager {
   /// Constructor
   /// </summary>
   ColorManager(FrameInfo frameInfo,
-               const val &iccProfile) {
+               const val &iccProfile,
+               int outputType = 0 /* 0: sRGB (default), 1: Display-P3 */) {
 
     this->frameInfo = frameInfo;
 
     const std::vector<uint8_t> iccProfileVector =
       convertJSArrayToNumberVector<uint8_t>(iccProfile);
 
-    this->icc_transform = dcm_icc_transform_create((const char *) iccProfileVector.data(),
-                                                   (uint32_t) iccProfileVector.size(),
-                                                   this->frameInfo.planarConfiguration,
-                                                   this->frameInfo.columns,
-                                                   this->frameInfo.rows);
+    this->icc_transform = dcm_icc_transform_create_for_output((const char *) iccProfileVector.data(),
+                                                              (uint32_t) iccProfileVector.size(),
+                                                              this->frameInfo.planarConfiguration,
+                                                              this->frameInfo.columns,
+                                                              this->frameInfo.rows,
+                                                              static_cast<DcmIccOutputType>(outputType));
   }
 
   /// <summary>

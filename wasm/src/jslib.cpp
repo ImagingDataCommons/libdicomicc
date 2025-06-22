@@ -17,7 +17,7 @@ EMSCRIPTEN_BINDINGS(FrameInfo) {
 
 EMSCRIPTEN_BINDINGS(ColorManager) {
   class_<ColorManager>("ColorManager")
-    .constructor<FrameInfo, const val>()
+    .constructor<FrameInfo, const val, int>()
     .function("getFrameInfo", &ColorManager::getFrameInfo)
     .function("transform", &ColorManager::transform)
   ;

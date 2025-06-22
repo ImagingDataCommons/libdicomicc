@@ -16,23 +16,74 @@ const char *dcm_icc_get_version(void) {
     return DCMICC_VERSION;
 }
 
-DmcIccTransform *dcm_icc_transform_create(const char *icc_profile,
-                                          uint32_t icc_profile_size,
-                                          uint8_t planar_configuration,
-                                          uint16_t columns,
-                                          uint16_t rows) {
+DmcIccTransform *dcm_icc_transform_create_for_output(const char *icc_profile,
+                                                     uint32_t icc_profile_size,
+                                                     uint8_t planar_configuration,
+                                                     uint16_t columns,
+                                                     uint16_t rows,
+                                                     DcmIccOutputType output_type) {
     cmsUInt32Number type;
 
     // Input ICC profile: obtained from DICOM data set
-    const cmsHPROFILE in_handle  = cmsOpenProfileFromMem(icc_profile,
-                                                         icc_profile_size);
+    const cmsHPROFILE in_handle = cmsOpenProfileFromMem(icc_profile,
+                                                        icc_profile_size);
+    cmsHPROFILE out_handle = NULL;
 
     if (in_handle == NULL) {
         return NULL;
     }
 
-    // Output ICC profile: fixed to sRGB
-    const cmsHPROFILE out_handle = cmsCreate_sRGBProfile();
+    // sRGB output ICC profile (use build-in littleCMS functionality)
+    if (output_type == DCM_ICC_OUTPUT_SRGB) {
+        // Output ICC profile: fixed to sRGB
+        out_handle = cmsCreate_sRGBProfile();
+
+    // Display-P3 output ICC profile: this is a wide-gamut RGB color space
+    } else if (output_type == DCM_ICC_OUTPUT_DISPLAY_P3) {
+        // D65 White Point
+        cmsCIExyY D65 = { 0.3127, 0.3290, 1.0 };
+        // Display-P3 primaries (same as DCI-P3)
+        cmsCIExyYTRIPLE DisplayP3Primaries = {
+            {0.6800, 0.3200, 1.0}, // Display P3 Red
+            {0.2650, 0.6900, 1.0}, // Display P3 Green
+            {0.1500, 0.0600, 1.0}  // Display P3 Blue
+        };
+        // sRGB transfer function
+        cmsToneCurve* sRGBTransferFunction[3];
+        cmsFloat64Number Parameters[5];
+        Parameters[0] = 2.4;
+        Parameters[1] = 1. / 1.055;
+        Parameters[2] = 0.055 / 1.055;
+        Parameters[3] = 1. / 12.92;
+        Parameters[4] = 0.04045;
+
+        sRGBTransferFunction[0] = sRGBTransferFunction[1] = sRGBTransferFunction[2] = cmsBuildParametricToneCurve(NULL, 4, Parameters);
+        if (sRGBTransferFunction[0] == NULL) {
+            cmsCloseProfile(in_handle);
+            return NULL;
+        }
+
+        // Combine the white point, primaries, and transfer functions into an RGB profile
+        out_handle = cmsCreateRGBProfileTHR(NULL, &D65, &DisplayP3Primaries, sRGBTransferFunction);
+        cmsFreeToneCurve(sRGBTransferFunction[0]);
+
+        if (out_handle == NULL) {
+            cmsCloseProfile(in_handle);
+            return NULL;
+        }
+
+        // Set the profile description
+        const wchar_t* description = L"Display-P3";
+        cmsMLU* mlu = cmsMLUalloc(NULL, 1);
+        cmsMLUsetWide(mlu, "en", "US", description);
+        cmsWriteTag(out_handle, cmsSigProfileDescriptionTag, mlu);
+        cmsMLUfree(mlu);
+ 
+    } else {
+        // Unknown or unsupported output_type
+        cmsCloseProfile(in_handle);
+        return NULL;
+    }
 
     if (out_handle == NULL) {
         cmsCloseProfile(in_handle);
@@ -70,6 +121,21 @@ DmcIccTransform *dcm_icc_transform_create(const char *icc_profile,
     icc_transform->number_of_pixels = (uint32_t)rows * (uint32_t)columns;
 
     return icc_transform;
+}
+
+// Backward-compatible wrapper function
+DmcIccTransform *dcm_icc_transform_create(const char *icc_profile,
+                                          uint32_t icc_profile_size,
+                                          uint8_t planar_configuration,
+                                          uint16_t columns,
+                                          uint16_t rows) {
+    // Call the extended function with DCM_ICC_OUTPUT_SRGB as the default output type
+    return dcm_icc_transform_create_for_output(icc_profile,
+                                               icc_profile_size,
+                                               planar_configuration,
+                                               columns,
+                                               rows,
+                                               DCM_ICC_OUTPUT_SRGB);
 }
 
 void dcm_icc_transform_apply(const DmcIccTransform *icc_transform,

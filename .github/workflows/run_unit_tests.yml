@@ -98,7 +98,7 @@ jobs:
       run: |
         mkdir build
         cd build
-        cmake -DCMAKE_PREFIX_PATH=$PWD/install ..
+        cmake -DCMAKE_PREFIX_PATH=$PWD/install -DCMAKE_INSTALL_PREFIX=$PWD/install  ..
         make
         make install
 

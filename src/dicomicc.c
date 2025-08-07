@@ -180,22 +180,20 @@ cmsHPROFILE create_romm_rgb_profile(void) {
         {0.0366, 0.0001, 1.0}  // ROMM RGB Blue
     };
 
-    // ROMM RGB transfer function parameters, parametric curve type 5:
-    // Y = (a * X + b) ^ gamma + e for X >= d
-    // Y =  c * X              + f for X <  d
+    // ROMM RGB transfer function parameters, parametric curve type 4:
+    // Y = (a * X + b) ^ gamma for X >= d
+    // Y =  c * X              for X <  d
     cmsToneCurve* RommRGBTransferFunction[3];
-    cmsFloat64Number Parameters[7];
-    Parameters[0] = 1.8;                  // Gamma
-    Parameters[1] = 0.996527;             // a
-    Parameters[2] = 0.003473;             // b
-    Parameters[3] = 0.0622829;            // c
-    Parameters[4] = 0.03125;              // d
-    Parameters[5] = 0.0;                  // e
-    Parameters[6] = 0.003473;             // f
+    cmsFloat64Number Parameters[5];
+    Parameters[0] = 1.8;      // Gamma
+    Parameters[1] = 1.0;      // a
+    Parameters[2] = 0.0;      // b
+    Parameters[3] = 0.0625;   // c
+    Parameters[4] = 0.03125;  // d
 
     // Create the tone curve
     RommRGBTransferFunction[0] = RommRGBTransferFunction[1] = RommRGBTransferFunction[2] = 
-        cmsBuildParametricToneCurve(NULL, 5, Parameters);
+        cmsBuildParametricToneCurve(NULL, 4, Parameters);
 
     if (RommRGBTransferFunction[0] == NULL) {
         fprintf(stderr, "Error: Failed to create Romm RGB transfer function\n");

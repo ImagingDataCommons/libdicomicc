@@ -7,8 +7,10 @@ typedef struct _DmcIccTransform DmcIccTransform;
 
 // Enum to specify the desired output ICC profile type
 typedef enum {
-    DCM_ICC_OUTPUT_SRGB = 0,        // Standard sRGB profile
-    DCM_ICC_OUTPUT_DISPLAY_P3 = 1   // Display P3 profile
+    DCM_ICC_OUTPUT_SRGB = 0,        // Standard sRGB    profile
+    DCM_ICC_OUTPUT_DISPLAY_P3 = 1,  // Display-P3       profile
+    DCM_ICC_OUTPUT_ADOBE_RGB = 2,   // Adobe RGB (1998) profile
+    DCM_ICC_OUTPUT_ROMM_RGB = 3     // ROMM RGB         profile
 } DcmIccOutputType;
 
 extern const char *dcm_icc_get_version(void);

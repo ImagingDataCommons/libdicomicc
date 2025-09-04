@@ -86,7 +86,6 @@ jobs:
         brew install \
           autoconf \
           automake \
-          cmake \
           emscripten \
           libtool \
           little-cms2 \

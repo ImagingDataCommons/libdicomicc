@@ -122,7 +122,7 @@ cmsHPROFILE create_adobe_rgb_profile(void) {
     Parameters[1] = 1.;                   // a
     Parameters[2] = 0;                    // b
     Parameters[3] = 1. / 32;              // c
-    Parameters[4] = 0.055680761;          // d (= c ^ (1 / (gamma - 1))
+    Parameters[4] = 0.055680761;          // d (= c ^ (1 / (gamma - 1)))
 
     // Create the tone curve
     AdobeRGBTransferFunction[0] = AdobeRGBTransferFunction[1] = AdobeRGBTransferFunction[2] = 

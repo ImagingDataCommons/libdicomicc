@@ -86,7 +86,6 @@ jobs:
         brew install \
           autoconf \
           automake \
-          cmake \
           emscripten \
           libtool \
           little-cms2 \
@@ -98,7 +97,7 @@ jobs:
       run: |
         mkdir build
         cd build
-        cmake -DCMAKE_PREFIX_PATH='/usr/local' ..
+        cmake -DCMAKE_PREFIX_PATH=$PWD/install -DCMAKE_INSTALL_PREFIX=$PWD/install  ..
         make
         make install
 

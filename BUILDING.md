@@ -44,7 +44,7 @@ The examples expects the lcms2, dicom, and dicomicc libraries to be already inst
 The build dependencies used for building the WASM binding are as follows:
 
 * CMake 3.16
-* Emscripten SDK 1.39.4
+* Emscripten SDK 4.19.0
 
 Earlier versions may work but have not been tested.
 

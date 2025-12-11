@@ -15,33 +15,22 @@ jobs:
       matrix:
         os: [ubuntu-latest]
     steps:
-    - uses: actions/checkout@v2
-    - name: Install build and test dependencies
-      run: |
-        export DEBIAN_FRONTEND=noninteractive
-        export DEBCONF_NONINTERACTIVE_SEEN=true
-        sudo apt-get update
-        sudo apt-get install -y --no-install-suggests --no-install-recommends \
-          autogen \
-          dh-autoreconf \
-          build-essential \
-          clang \
-          cmake \
-          git \
-          liblcms2-dev \
-          llvm \
-          libtool \
-          nodejs \
-          npm \
-          pkg-config \
-          python3 \
-          shtool \
-          valgrind
-        sudo apt-get clean
+    - name: Checkout
+      uses: actions/checkout@v2
 
     - name: Install yarn package manager
       run: npm install --global yarn
 
+    - name: Install emscript
+      uses: mymindstorm/setup-emsdk@v14
+      with:
+        version: 4.0.19
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y liblcms2-dev autoconf
+      
     - name: Build and install library
       run: |
         mkdir build
@@ -50,26 +39,13 @@ jobs:
         make
         sudo make install
 
-    - name: Build and install Emscripten SDK
-      run: |
-        git clone https://github.com/emscripten-core/emsdk.git
-        cd emsdk
-        git pull
-        ./emsdk install latest
-        ./emsdk activate latest
-        source ./emsdk_env.sh
-
     - name: Build WebAssembly bindings
       run: |
         yarn run clean
-        sh ./emsdk/emsdk activate latest
-        source ./emsdk/emsdk_env.sh
         yarn run build
 
     - name: Perform npm package publish dry run
       run: |
-        sh ./emsdk/emsdk activate latest
-        source ./emsdk/emsdk_env.sh
         npm publish . --dry-run
 
   macos:
@@ -78,20 +54,24 @@ jobs:
     strategy:
       fail-fast: false
     steps:
-    - uses: actions/checkout@v2
-    - name: Install build and test dependencies
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Install emscript
+      uses: mymindstorm/setup-emsdk@v14
+      with:
+        version: 4.0.19
+
+    - name: Install dependencies
       run: |
         brew update
         brew upgrade
         brew install \
           autoconf \
           automake \
-          emscripten \
           libtool \
           little-cms2 \
-          llvm \
-          node \
-          yarn
+          llvm
 
     - name: Build and install library
       run: |

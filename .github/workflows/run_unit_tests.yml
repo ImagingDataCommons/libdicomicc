@@ -24,7 +24,7 @@ jobs:
       uses: mymindstorm/setup-emsdk@v14
       with:
         version: 4.0.19
-        # The action internally caches emsdk; enabling default cache behavior
+        actions-cache-folder: '.emsdk-cache'
     
     - name: Setup Node with yarn cache
       uses: actions/setup-node@v4
@@ -75,6 +75,7 @@ jobs:
       uses: mymindstorm/setup-emsdk@v14
       with:
         version: 4.0.19
+        actions-cache-folder: '.emsdk-cache'
 
     - name: Setup Node with yarn cache
       uses: actions/setup-node@v4

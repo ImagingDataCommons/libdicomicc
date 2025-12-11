@@ -16,13 +16,25 @@ jobs:
         os: [ubuntu-latest]
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
 
     - name: Install emscript
       uses: mymindstorm/setup-emsdk@v14
       with:
         version: 4.0.19
+        # The action internally caches emsdk; enabling default cache behavior
     
+    - name: Setup Node with yarn cache
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22.16.0'
+        cache: 'yarn'
+        cache-dependency-path: |
+          package.json
+          yarn.lock
+
     - name: Install yarn package manager
       run: npm install --global yarn
 
@@ -55,12 +67,23 @@ jobs:
       fail-fast: false
     steps:
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
 
     - name: Install emscript
       uses: mymindstorm/setup-emsdk@v14
       with:
         version: 4.0.19
+
+    - name: Setup Node with yarn cache
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22.16.0'
+        cache: 'yarn'
+        cache-dependency-path: |
+          package.json
+          yarn.lock
 
     - name: Install yarn package manager
       run: npm install --global yarn

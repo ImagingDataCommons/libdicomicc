@@ -1,0 +1,45 @@
+name: Publish
+
+on:
+    release:
+        types: [published]
+
+jobs:
+    publish:
+      name: Publish npm package on release
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v2
+
+        - name: Install emscript
+          uses: mymindstorm/setup-emsdk@v14
+          with:
+            version: 4.0.19
+        
+        - name: Install yarn package manager
+          run: npm install --global yarn
+
+        - name: Install dependencies
+          run: |
+            sudo apt-get update
+            sudo apt-get install -y liblcms2-dev autoconf
+          
+        - name: Build and install library
+          run: |
+            mkdir build
+            cd build
+            cmake ..
+            make
+            sudo make install
+
+        - name: Build WebAssembly bindings
+          run: |
+            yarn run clean
+            yarn run build
+
+        - name: Perform npm package publish dry run
+          run: |
+            npm publish .
+          env:
+            NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}

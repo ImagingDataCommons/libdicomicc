@@ -18,13 +18,13 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Install yarn package manager
-      run: npm install --global yarn
-
     - name: Install emscript
       uses: mymindstorm/setup-emsdk@v14
       with:
         version: 4.0.19
+    
+    - name: Install yarn package manager
+      run: npm install --global yarn
 
     - name: Install dependencies
       run: |
@@ -61,6 +61,9 @@ jobs:
       uses: mymindstorm/setup-emsdk@v14
       with:
         version: 4.0.19
+
+    - name: Install yarn package manager
+      run: npm install --global yarn
 
     - name: Install dependencies
       run: |

@@ -22,7 +22,7 @@ class ColorManager {
   /// </summary>
   ColorManager(FrameInfo frameInfo,
                const val &iccProfile,
-               int outputType = DCM_ICC_OUTPUT_SRGB) {
+               DcmIccOutputType outputType = DCM_ICC_OUTPUT_SRGB) {
 
     this->frameInfo = frameInfo;
 

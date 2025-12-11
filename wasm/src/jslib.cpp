@@ -30,7 +30,7 @@ EMSCRIPTEN_BINDINGS(FrameInfo) {
 
 EMSCRIPTEN_BINDINGS(ColorManager) {
   class_<ColorManager>("ColorManager")
-    .constructor<FrameInfo, const val, int>()
+    .constructor<FrameInfo, const val, DcmIccOutputType>()
     .function("getFrameInfo", &ColorManager::getFrameInfo)
     .function("transform", &ColorManager::transform)
   ;

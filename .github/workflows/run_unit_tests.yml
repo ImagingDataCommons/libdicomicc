@@ -1,11 +1,9 @@
 name: build and test
-
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
-
+    branches: [master]
 jobs:
   linux:
     name: Build and run tests on Linux
@@ -15,103 +13,90 @@ jobs:
       matrix:
         os: [ubuntu-latest]
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 1
-
-    - name: Install emscripten
-      uses: mymindstorm/setup-emsdk@v14
-      with:
-        version: 4.0.19
-        actions-cache-folder: '.emsdk-cache'
-    
-    - name: Setup Node with yarn cache
-      uses: actions/setup-node@v4
-      with:
-        node-version: '22.16.0'
-        cache: 'yarn'
-        cache-dependency-path: |
-          package.json
-          yarn.lock
-
-    - name: Install yarn package manager
-      run: npm install --global yarn
-
-    - name: Install dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y liblcms2-dev autoconf
-      
-    - name: Build and install library
-      run: |
-        mkdir build
-        cd build
-        cmake ..
-        make
-        sudo make install
-
-    - name: Build WebAssembly bindings
-      run: |
-        yarn run clean
-        yarn run build
-
-    - name: Perform npm package publish dry run
-      run: |
-        npm publish . --dry-run
-
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Install emscripten
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: 4.0.19
+          actions-cache-folder: ".emsdk-cache"
+      - name: Setup Node with yarn cache
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.16.0"
+          cache: "yarn"
+          cache-dependency-path: |
+            package.json
+            yarn.lock
+      - name: Install yarn package manager
+        run: npm install --global yarn
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y liblcms2-dev autoconf
+      - name: Build and install library
+        run: |
+          mkdir build
+          cd build
+          cmake ..
+          make
+          sudo make install
+      - name: Build WebAssembly bindings
+        run: |
+          yarn run clean
+          yarn run build
+      - name: Perform npm package publish dry run
+        run: |
+          npm publish . --dry-run
   macos:
     name: Build and run tests on macOS
-    runs-on: macos-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
+      matrix:
+        os: [macos-latest]
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 1
-
-    - name: Install emscripten
-      uses: mymindstorm/setup-emsdk@v14
-      with:
-        version: 4.0.19
-        actions-cache-folder: '.emsdk-cache'
-
-    - name: Setup Node with yarn cache
-      uses: actions/setup-node@v4
-      with:
-        node-version: '22.16.0'
-        cache: 'yarn'
-        cache-dependency-path: |
-          package.json
-          yarn.lock
-
-    - name: Install yarn package manager
-      run: npm install --global yarn
-
-    - name: Install dependencies
-      run: |
-        brew update
-        brew upgrade
-        brew install \
-          autoconf \
-          automake \
-          libtool \
-          little-cms2 \
-          llvm
-
-    - name: Build and install library
-      run: |
-        mkdir build
-        cd build
-        cmake -DCMAKE_PREFIX_PATH=$PWD/install -DCMAKE_INSTALL_PREFIX=$PWD/install  ..
-        make
-        make install
-
-    - name: Build WebAssembly bindings
-      run: |
-        yarn run clean
-        yarn run build
-
-    - name: Perform npm package publish dry run
-      run: npm publish . --dry-run
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Install emscripten
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: 4.0.19
+          actions-cache-folder: ".emsdk-cache"
+      - name: Setup Node with yarn cache
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.16.0"
+          cache: "yarn"
+          cache-dependency-path: |
+            package.json
+            yarn.lock
+      - name: Install yarn package manager
+        run: npm install --global yarn
+      - name: Install dependencies
+        run: |
+          brew update
+          brew upgrade
+          brew install \
+            autoconf \
+            automake \
+            libtool \
+            little-cms2 \
+            llvm
+      - name: Build and install library
+        run: |
+          mkdir build
+          cd build
+          cmake -DCMAKE_PREFIX_PATH=$PWD/install -DCMAKE_INSTALL_PREFIX=$PWD/install  ..
+          make
+          make install
+      - name: Build WebAssembly bindings
+        run: |
+          yarn run clean
+          yarn run build
+      - name: Perform npm package publish dry run
+        run: npm publish . --dry-run

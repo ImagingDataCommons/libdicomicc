@@ -29,10 +29,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22.16.0"
-          cache: "yarn"
-          cache-dependency-path: |
-            package.json
-            yarn.lock
           registry-url: "https://registry.npmjs.org"
       - name: Install yarn package manager
         run: npm install --global yarn
@@ -51,6 +47,22 @@ jobs:
         run: |
           yarn run clean
           yarn run build
+      - name: Verify package version matches tag
+        run: |
+          set -euo pipefail
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          TAG="${{ github.event.release.tag_name }}"
+          if [ -z "$TAG" ]; then TAG="${GITHUB_REF#refs/tags/}"; fi
+          if [ -z "$TAG" ]; then
+            echo "Error: could not determine release tag from github.event.release.tag_name or GITHUB_REF"
+            exit 1
+          fi
+          TAG="${TAG#v}"
+          if [ "$PKG_VERSION" != "$TAG" ]; then
+            echo "Version mismatch: package.json=$PKG_VERSION tag=$TAG"
+            exit 1
+          fi
+          echo "Version OK: $PKG_VERSION"
       - name: Publish to npm
         run: |
           npm publish .

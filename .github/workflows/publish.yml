@@ -23,7 +23,7 @@ jobs:
           with:
             fetch-depth: 1
 
-        - name: Install emscript
+        - name: Install emscripten
           uses: mymindstorm/setup-emsdk@v14
           with:
             version: 4.0.19
@@ -37,6 +37,7 @@ jobs:
             cache-dependency-path: |
               package.json
               yarn.lock
+            registry-url: 'https://registry.npmjs.org'
 
         - name: Install yarn package manager
           run: npm install --global yarn

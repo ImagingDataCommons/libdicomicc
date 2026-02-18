@@ -1,5 +1,5 @@
 {
-  "name": "dicomicc",
+  "name": "@imagingdatacommons/dicomicc",
   "version": "0.2.0",
   "description": "WASM bindings and JavaScript API for the dicomicc C library",
   "main": "dist/dicomiccwasm.js",
@@ -24,17 +24,22 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hackermd/libdicomicc"
+    "url": "https://github.com/imagingdatacommons/libdicomicc.git"
   },
   "keywords": [
     "ICC",
-    "DICOM"
+    "DICOM",
+    "color"
   ],
   "author": {
-    "name": "Markus D. Herrmann",
-    "email": "hackermd@protonmail.com"
+    "name": "Imaging Data Commons",
+    "email": "support@canceridc.dev"
   },
   "contributors": [
+    {
+      "name": "Markus D. Herrmann (original author, no longer active)",
+      "email": "hackermd@protonmail.com"
+    },
     {
       "name": "Davide Punzo",
       "email": "punzodavide@hotmail.it"
@@ -42,7 +47,7 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/hackermd/libdicomicc/issues"
+    "url": "https://github.com/imagingdatacommons/libdicomicc/issues"
   },
-  "homepage": "https://github.com/hackermd/libdicomicc#readme"
+  "homepage": "https://github.com/imagingdatacommons/libdicomicc#readme"
 }

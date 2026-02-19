@@ -1,0 +1,69 @@
+name: Publish
+on:
+  release:
+    types: [published]
+jobs:
+  publish:
+    name: Publish npm package on release
+    runs-on: ubuntu-latest
+    # Guard rails: only publish from canonical repo, never from forks
+    if: >-
+      github.event.repository.fork == false &&
+      github.repository_owner == 'ImagingDataCommons'
+    permissions:
+      contents: read
+      id-token: write
+    concurrency:
+      group: npm-publish-${{ github.ref }}
+      cancel-in-progress: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Install emscripten
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: 4.0.19
+          actions-cache-folder: ".emsdk-cache"
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.16.0"
+          registry-url: "https://registry.npmjs.org"
+      - name: Install yarn package manager
+        run: npm install --global yarn
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y liblcms2-dev autoconf cmake
+      - name: Build and install library
+        run: |
+          mkdir build
+          cd build
+          cmake ..
+          make
+          sudo make install
+      - name: Build WebAssembly bindings
+        run: |
+          yarn run clean
+          yarn run build
+      - name: Verify package version matches tag
+        run: |
+          set -euo pipefail
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          TAG="${{ github.event.release.tag_name }}"
+          if [ -z "$TAG" ]; then TAG="${GITHUB_REF#refs/tags/}"; fi
+          if [ -z "$TAG" ]; then
+            echo "Error: could not determine release tag from github.event.release.tag_name or GITHUB_REF"
+            exit 1
+          fi
+          TAG="${TAG#v}"
+          if [ "$PKG_VERSION" != "$TAG" ]; then
+            echo "Version mismatch: package.json=$PKG_VERSION tag=$TAG"
+            exit 1
+          fi
+          echo "Version OK: $PKG_VERSION"
+      - name: Publish to npm
+        run: |
+          npm publish . --provenance --access public

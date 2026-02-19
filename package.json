@@ -1,6 +1,6 @@
 {
   "name": "@imagingdatacommons/dicomicc",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "WASM bindings and JavaScript API for the dicomicc C library",
   "main": "dist/dicomiccwasm.js",
   "publishConfig": {

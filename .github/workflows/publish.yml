@@ -12,6 +12,7 @@ jobs:
       github.repository_owner == 'ImagingDataCommons'
     permissions:
       contents: read
+      id-token: write
     concurrency:
       group: npm-publish-${{ github.ref }}
       cancel-in-progress: false
@@ -65,6 +66,4 @@ jobs:
           echo "Version OK: $PKG_VERSION"
       - name: Publish to npm
         run: |
-          npm publish .
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
+          npm publish . --provenance --access public

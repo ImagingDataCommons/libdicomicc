@@ -27,9 +27,9 @@ jobs:
           version: 4.0.19
           actions-cache-folder: ".emsdk-cache"
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: "22.16.0"
+          node-version: "24.13.1"
           registry-url: "https://registry.npmjs.org"
       - name: Install yarn package manager
         run: npm install --global yarn
